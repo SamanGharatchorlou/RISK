@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//TODO: FIX - once a soldier has been deployed the player can press - and gain a soldier from another territory 
-//			  essentially moving soldiers from one country to another
+//TODO:once a soldier has been deployed the player can press - and gain a soldier from another territory 
+// essentially moving soldiers from one country to another
+//TODO: temporarily tag each soldier - only tagged soldiers can be moved. after remove all tags.
 
 // soldier receives soldiers at the start of thier turn
 public class DeploySoldiers : MonoBehaviour {
@@ -12,6 +13,7 @@ public class DeploySoldiers : MonoBehaviour {
 	PlayerTurn playerTurn;
 	ReceiveBonus receiveBonus;
 	Phases phases;
+	ButtonColour buttonColour;
 
 	GameObject territories, GUI;
 
@@ -22,8 +24,10 @@ public class DeploySoldiers : MonoBehaviour {
 	void Awake () {
 		territories = GameObject.FindGameObjectWithTag ("Territories");
 		soldierBonus = territories.GetComponent<SoldierBonus> ();
+
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		receiveBonus = GUI.GetComponent<ReceiveBonus> ();
+		buttonColour = GUI.GetComponent<ButtonColour> ();
 
 		phases = this.GetComponent<Phases> ();
 		playerTurn = this.GetComponent<PlayerTurn> ();
@@ -44,16 +48,21 @@ public class DeploySoldiers : MonoBehaviour {
 
 	// checks if player can add a soldier onto the field from the bonus soldier bank
 	public bool AddSoldier(){
-		if (movingSoldierCount > 0)
+		if (movingSoldierCount > 0) {
+			buttonColour.SetupTurnColour (movingSoldierCount);
 			return true;
-		else
+		}
+		else {
 			return false;
+		}
 	}
 
 	// checks if player can remove a soldier from the field into the bonus soldier bank
 	public bool RemoveSoldier(){
-		if (movingSoldierCount < bonusSoldierCount)
+		if (movingSoldierCount < bonusSoldierCount) {
+			buttonColour.SetupTurnColour (movingSoldierCount);
 			return true;
+		}
 		else
 			return false;
 	}

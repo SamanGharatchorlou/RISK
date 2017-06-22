@@ -8,24 +8,23 @@ public class TerritoryRank : MonoBehaviour {
 	List<int[]> TerrRankStatic;
 	List<int> TerritoryCounts;
 
-	GameStats gameStats;
 	TerritoryCount territoryCount;
 	PlayerRank playerRank;
 
 	int numberOfPlayers;
 	bool activeCatagory;
 
-	// Use this for initialization
-	void Start () {
+	void Awake () {
 		playerRank = this.GetComponent<PlayerRank> ();
 		territoryCount = this.GetComponent<TerritoryCount> ();
-		gameStats = this.GetComponent<GameStats> ();
-		numberOfPlayers = gameStats.numberOfPlayers;
-		activeCatagory = false;
 	}
 
+	void Start(){
+		activeCatagory = false;
+	}
+		
 	// Ranks players based on territory count -- called in GameStats
-	public void ByTerrCount(){
+	public void ByTerrCount(int numberOfPlayers){
 		// build a list{player number(0), number of territories owned(1)} from landcounter dictionary
 		TerrRankStatic = new List<int[]> ();
 		for (int i = 1; i <= numberOfPlayers; i++) {

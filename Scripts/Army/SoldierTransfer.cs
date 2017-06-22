@@ -29,6 +29,8 @@ public class SoldierTransfer : MonoBehaviour {
 		}
 	}
 
+	//TODO: if +/- is pressed before a claim has activated gives error
+
 	// moves troops from attacking country to claimed country (----- + button -----)
 	public void FwdTransferTroops(){
 		// only run code on battle phase

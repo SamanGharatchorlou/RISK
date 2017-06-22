@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PlayerTurn : MonoBehaviour {
 
-	GameStats gameStats;
 	ContinentBonus continentBonus;
 	DeploySoldiers deploySoldiers;
+	ArmyMovement armyMovement;
 
 	GameObject territories;
 
@@ -21,8 +21,13 @@ public class PlayerTurn : MonoBehaviour {
 	void Awake () {
 		territories = GameObject.FindGameObjectWithTag ("Territories");
 		continentBonus = territories.GetComponent<ContinentBonus> ();
-		gameStats = territories.GetComponent<GameStats> ();
 		deploySoldiers = this.GetComponent<DeploySoldiers> ();
+		armyMovement = this.GetComponent<ArmyMovement> ();
+	}
+
+	void Start(){
+		// sets the turn to 1 after opening phase
+		turn = 0;
 
 		// Player 1 starts
 		player1 = true;
@@ -50,15 +55,8 @@ public class PlayerTurn : MonoBehaviour {
 		};
 	}
 
-	void Start(){
-		// set number of players
-		ChangePlayerCount (gameStats.numberOfPlayers);
-		// sets the turn to 1 after opening phase
-		turn = 0;
-	}
-
 	// removes the unused players from list (input given by button)
-	void ChangePlayerCount(int numberOfPlayers) {
+	public void ChangePlayerCount(int numberOfPlayers) {
 		turnOrder.RemoveRange (numberOfPlayers, turnOrder.Count - numberOfPlayers);
 	}
 
@@ -78,8 +76,10 @@ public class PlayerTurn : MonoBehaviour {
 				turn += 1;
 			}
 		}
+		// reset players ability to move troops during movement phase
+		armyMovement.movementDone = false;
 		// calculate bonus from continent bonus
-		continentBonus.BuildContBonus ();
+		continentBonus.UpdateContBonus ();
 		// give player bonus soldiers
 		deploySoldiers.BonusStore ();
 	}

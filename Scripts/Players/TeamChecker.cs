@@ -44,7 +44,6 @@ public class TeamChecker : MonoBehaviour {
 		return colour;
 	}
 
-	//TODO: can this function be cleaned up?
 	// returns the player number of a particular colour
 	public int ColourToPlayer(Color countryColour) {
 		r = countryColour.r;
@@ -72,7 +71,7 @@ public class TeamChecker : MonoBehaviour {
 		if (indexListTwo.Count == 1)
 			return indexListTwo [0]+1;
 
-		// stores i's with the correct r and g colour
+		// finds the correct player
 		for (int k = 0; k < indexListTwo.Count; k++) {
 			if (playerTurn.playerColourList [indexListTwo [k]] [2] == b)
 				playerIndex = indexListTwo [k];

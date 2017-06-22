@@ -10,11 +10,11 @@ public class TerritoryCount : MonoBehaviour {
 	Attack attack;
 	BoardSetUp boardSetUp;
 	TerritoryBonus territoryBonus;
-	GameStats gameStats;
 	TerritoryRank territoryRank;
 
 	GameObject scriptHolder;
 
+	int numbOfPlayers;
 	string attackingPlayer, defendingPlayer;
 
 	void Awake(){
@@ -22,26 +22,21 @@ public class TerritoryCount : MonoBehaviour {
 		attack = scriptHolder.GetComponent<Attack> ();
 
 		boardSetUp = this.GetComponent<BoardSetUp> ();
-		gameStats = this.GetComponent<GameStats> ();
 		territoryBonus = this.GetComponent<TerritoryBonus> ();
 		territoryRank = this.GetComponent<TerritoryRank> ();
 	}
 
-	void Start(){
-		// Number of territories owned by each player
-		for (int i = 1; i <= gameStats.numberOfPlayers; i++)
-			landCounter.Add ("Player" + i, 0);
-	}
-
 	// builds a dictionary of the number of territories owned
-	public void BuildTerritoryBank() {
+	public void BuildTerritoryBank(int numberOfPlayers) {
+		numbOfPlayers = numberOfPlayers;
 		// re runs PlayerLandBank code as previous table is modified by BoardSetUp.RandomPlayer()
-		boardSetUp.PlayerLandBank (gameStats.numberOfPlayers);
-		for (int i = 0; i < gameStats.numberOfPlayers; i++) {
-			landCounter ["Player" + (boardSetUp.landBank [i] [0] + 1)] = boardSetUp.landBank [i] [1];
+		boardSetUp.PlayerLandBank (numbOfPlayers);
+		for (int i = 0; i < numbOfPlayers; i++) {
+			//landCounter ["Player" + (boardSetUp.landBank [i] [0] + 1)] = boardSetUp.landBank [i] [1];
+			landCounter.Add ("Player" + (boardSetUp.landBank [i] [0] + 1), boardSetUp.landBank [i] [1]);
 		}
 		// build rank system
-		territoryRank.ByTerrCount ();
+		territoryRank.ByTerrCount (numbOfPlayers);
 	}
 
 	// updates territory bank - called in TakeControl
@@ -56,7 +51,7 @@ public class TerritoryCount : MonoBehaviour {
 		territoryBonus.UpdateTerritoryBonus (attackingPlayer, defendingPlayer);
 
 		// rebuild territoryRank list when an updated has occured
-		territoryRank.ByTerrCount();
+		territoryRank.ByTerrCount(numbOfPlayers);
 	}
 		
 

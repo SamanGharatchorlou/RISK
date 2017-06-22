@@ -16,11 +16,13 @@ public class BoardSetUp : MonoBehaviour {
 	Phases phases;
 	OpeningDeployment openingDeployment;
 	GameInstructions gameInstructions;
+	PlayerTurn playerTurn;
 
 	GameObject scriptHolder, GUI, clone;
 
 	float r, g, b, a;
 
+	public int numberOfPlayers;
 	int playerNumber, randomPlayerNum;
 	int territoryCount, territoriesAllocated, territoriesLeft;
 	int randomIndex, update, stroredValue;
@@ -35,22 +37,31 @@ public class BoardSetUp : MonoBehaviour {
 		soldierManagement = scriptHolder.GetComponent<SoldierManagement> ();
 		allocateSoldiers = scriptHolder.GetComponent<AllocateSoldiers> ();
 		phases = scriptHolder.GetComponent<Phases> ();
+		playerTurn = scriptHolder.GetComponent<PlayerTurn> ();
 
 		gameStats = this.GetComponent<GameStats> ();
 	}
 
 	// TODO: change into restart game button after selected (inlc. confirmation is selected)
+
 	// Starts the game - runs all required functions (Start Game button)
 	public void StartGame(){
+		//TODO: allow player to adjust this at start of game
+		// input number of players
+		numberOfPlayers = 3;
+
+		// set up playerTurn list
+		playerTurn.ChangePlayerCount (numberOfPlayers);
+
 		// randomly distribute all territories
-		PlayerLandBank (gameStats.numberOfPlayers);
+		PlayerLandBank (numberOfPlayers);
 		SetBoard ();
 		// build game stats
-		gameStats.SetUpGameStats ();
+		gameStats.SetUpGameStats (numberOfPlayers);
 		// give players starting armies
-		allocateSoldiers.BuildSoldierBank();
+		allocateSoldiers.BuildSoldierBank(numberOfPlayers);
 		// set up opening deployment
-		openingDeployment.BuildDeployementTable();
+		openingDeployment.BuildDeployementTable(numberOfPlayers);
 		// instruction text
 		gameInstructions.OpeningPhasePlacement();
 	}
@@ -59,9 +70,9 @@ public class BoardSetUp : MonoBehaviour {
 	public void PlayerLandBank(int numberOfPlayers) {
 		landBank = new List<int[]> ();
 		territoryCount = 42;
-		territoriesAllocated = territoryCount / gameStats.numberOfPlayers;
+		territoriesAllocated = territoryCount / numberOfPlayers;
 		// build a list of players allocating the land among them equally
-		for (int playerNumber = 0; playerNumber < gameStats.numberOfPlayers; playerNumber++) {
+		for (int playerNumber = 0; playerNumber < numberOfPlayers; playerNumber++) {
 			landBank.Add (new int[]{ playerNumber, territoriesAllocated });
 			territoryCount -= territoriesAllocated;
 		}

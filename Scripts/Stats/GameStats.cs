@@ -12,10 +12,10 @@ public class GameStats : MonoBehaviour {
 	TerritoryBonus territoryBonus;
 	ContinentBonus continentBonus;
 	SoldierBonus soldierBonus;
+	PlayerRank playerRank;
+	BoardSetUp boardSetUp;
 
-	GameObject GUI;
-
-	public int numberOfPlayers;
+	GameObject scriptHolder;
 
 	void Awake(){
 		troopCount = this.GetComponent<TroopCount> ();
@@ -23,31 +23,33 @@ public class GameStats : MonoBehaviour {
 		territoryBonus = this.GetComponent<TerritoryBonus> ();
 		continentBonus = this.GetComponent<ContinentBonus> ();
 		soldierBonus = this.GetComponent<SoldierBonus> ();
-
-		//TODO: allow player to adjust this at start of game
-		// input number of players
-		numberOfPlayers = 3;
+		playerRank = this.GetComponent<PlayerRank> ();
+		boardSetUp = this.GetComponent<BoardSetUp> ();
 	}
-
-	public void Start(){
+		
+	// Set up all the game statistics lists
+	public void SetUpGameStats(int numberOfPlayers){
+		BuildGameStats ();
+		// set up number of territories list
+		territoryCount.BuildTerritoryBank (numberOfPlayers);
+		// set up number of troops list
+		troopCount.BuildTroopBank(numberOfPlayers);
+		// set up territory bonus list
+		territoryBonus.BuildTerritoryBonus(numberOfPlayers);
+		// set up continent bonus list
+		continentBonus.BuildContBonus(numberOfPlayers);
+		//Do i need this line of code?
+		continentBonus.UpdateContBonus();
+		// set up soldier bonus list
+		soldierBonus.UpdateSoldierBonus(numberOfPlayers);
+		// build rank table
+		playerRank.BuildRankTable(boardSetUp.numberOfPlayers);
+	}
+		
+	void BuildGameStats(){
 		// build a dictionary with an array of 3 (# territories, # troops, soldier bonus)
-		for (int i = 1; i <= numberOfPlayers; i++)
+		for (int i = 1; i <= boardSetUp.numberOfPlayers; i++)
 			gameStatistics.Add ("Player" + i, new int[3]);
 	}
-
-	// Set up all the game statistics lists
-	public void SetUpGameStats(){
-		// set up number of territories list
-		territoryCount.BuildTerritoryBank ();
-		// set up number of troops list
-		troopCount.BuildTroopBank();
-		// set up territory bonus list
-		territoryBonus.BuildTerritoryBonus();
-		// set up continent bonus list
-		continentBonus.BuildContBonus();
-		// set up soldier bonus list
-		soldierBonus.UpdateSoldierBonus();
-	}
-
 
 }

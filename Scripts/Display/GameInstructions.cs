@@ -19,15 +19,20 @@ public class GameInstructions : MonoBehaviour {
 		armyMovement = scriptHolder.GetComponent<ArmyMovement> ();
 	}
 
+	//----------------opening/set up phase----------------
+
 	// place troop during opening phase - BoardSetUp.StartGame
 	public void OpeningPhasePlacement(){
 		instructionBox.text = "Select the country you'd like to place a single troop on.";
 	}
 
+
 	// place all troops before moving on - AllocateSoldiers.EndOpeningPhase
 	public void PlaceTroops(){
 		instructionBox.text = "Deploy all your remaining troops then press 'End Setup' to move onto the battle phase.";
 	}
+
+	//----------------battle phase----------------
 
 	// select attacker - Phases.EndSetupPhase
 	public void SelectAtkCountry(){
@@ -54,6 +59,8 @@ public class GameInstructions : MonoBehaviour {
 		"or press 'End Battle' if you'd like to move on the movement phase.";
 	}
 
+	//----------------movement phase----------------
+
 	// move troops, select from country - Phases.EndBattlePhase
 	public void SelectFromCountry(){
 		instructionBox.text = "You can move 1 collocetion of troops across connected territories.\n" +
@@ -75,12 +82,17 @@ public class GameInstructions : MonoBehaviour {
 		"\nOnce you're done press 'End Turn'.";
 	}
 
+	//----------------error messages----------------
+
 	// error message if countries aren't connected
 	public void NotConnect(string fromCountry, string toCountry){
 		instructionBox.text = fromCountry + " and " + toCountry + " aren't connected and/or under your control.\n" +
 		"Try selecting something else.";
 	}
 
+	public void NoSelection(string selection){
+		instructionBox.text = "No " + selection + " selected.";
+	}
 
 
 	//TODO: add a want to know your odds of winning this fight?

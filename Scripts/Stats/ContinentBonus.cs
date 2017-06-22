@@ -10,16 +10,23 @@ public class ContinentBonus : MonoBehaviour {
 	public Dictionary<string,int> playerContBonus = new Dictionary<string,int> ();
 
 	TeamChecker teamChecker;
-	GameStats gameStats;
 	SoldierBonus soldierBonus;
 	PlayerTurn playerTurn;
 
 	GameObject scriptHolder;
 
+	int numbOfPlayers;
 	int player, lastPlayer, countryCounter;
 	bool notFirstPlayer;
 
 	void Awake(){
+		scriptHolder = GameObject.FindGameObjectWithTag ("ScriptHolder");
+		teamChecker = scriptHolder.GetComponent<TeamChecker> ();
+		playerTurn = scriptHolder.GetComponent<PlayerTurn> ();
+		soldierBonus = this.GetComponent<SoldierBonus> ();
+	}
+
+	void Start(){
 		// Continent bonuses
 		continentBonuses.Add ("North America", 5);
 		continentBonuses.Add ("South America", 2);
@@ -27,25 +34,19 @@ public class ContinentBonus : MonoBehaviour {
 		continentBonuses.Add ("Europe", 5);
 		continentBonuses.Add ("Asia", 7);
 		continentBonuses.Add ("Australia", 2);
-
-		scriptHolder = GameObject.FindGameObjectWithTag ("ScriptHolder");
-		teamChecker = scriptHolder.GetComponent<TeamChecker> ();
-		playerTurn = scriptHolder.GetComponent<PlayerTurn> ();
-		gameStats = this.GetComponent<GameStats> ();
-		soldierBonus = this.GetComponent<SoldierBonus> ();
 	}
-
-	void Start(){
+		
+	public void BuildContBonus(int numberOfPlayers){
 		// build initial dictionary
-		for (int i = 1; i <= gameStats.numberOfPlayers; i++)
+		numbOfPlayers = numberOfPlayers;
+		for (int i = 1; i <= numbOfPlayers; i++)
 			playerContBonus.Add ("Player" + i, 0);
 	}
 
 	// Builds a dictionary of continents bonuses recevied
-	// - called in TerritoryBonus
-	public void BuildContBonus() {
+	public void UpdateContBonus() {
 		// Reset continent bonuses before re-building the dictionary again
-		for (int i = 1; i <= gameStats.numberOfPlayers; i++)
+		for (int i = 1; i <= numbOfPlayers; i++)
 			playerContBonus["Player" + i] = 0;
 
 		// Cycle through continents
@@ -74,7 +75,7 @@ public class ContinentBonus : MonoBehaviour {
 				playerContBonus ["Player" + player] += continentBonuses [continentTrans.name];
 			}
 		}
-		soldierBonus.UpdateSoldierBonus ();
+		soldierBonus.UpdateSoldierBonus (numbOfPlayers);
 	}
 
 }

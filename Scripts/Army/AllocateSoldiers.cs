@@ -11,7 +11,6 @@ public class AllocateSoldiers : MonoBehaviour {
 	//25 armies each if five players
 	//20 armies each if six players
 
-	GameStats gameStats;
 	TroopCount troopCount;
 	AddSoldier addSoldier;
 	CountryManagement countryManagement;
@@ -23,6 +22,7 @@ public class AllocateSoldiers : MonoBehaviour {
 	OpeningDeployment openingDeployment;
 	DisplayTurn displayTurn;
 	GameInstructions gameInstructions;
+	BoardSetUp boardSetUp;
 
 	GameObject territories, GUI;
 
@@ -34,9 +34,9 @@ public class AllocateSoldiers : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
 		territories = GameObject.FindGameObjectWithTag ("Territories");
-		gameStats = territories.GetComponent<GameStats> ();
 		troopCount = territories.GetComponent<TroopCount> ();
 		changeCategory = territories.GetComponent<ChangeCatagory> ();
+		boardSetUp = territories.GetComponent<BoardSetUp> ();
 
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		openingDeployment = GUI.GetComponent<OpeningDeployment> ();
@@ -51,11 +51,11 @@ public class AllocateSoldiers : MonoBehaviour {
 	}
 
 	// Build a soldier bank holding the number of soldiers each player has left to deploy - BoardSetUp
-	public void BuildSoldierBank(){
+	public void BuildSoldierBank(int numberOfPlayers){
 		// the number of starting armies each player receives - should be 50 - ....
-		startingArmies = 30 - (5 * gameStats.numberOfPlayers);
+		startingArmies = 30 - (5 * numberOfPlayers);
 		// build list of giving the number of starting armies each player gets after land has been allocated
-		for (int i = 1; i <= gameStats.numberOfPlayers; i++) {
+		for (int i = 1; i <= numberOfPlayers; i++) {
 			playerArmies = startingArmies - troopCount.troopCounter ["Player" + i];
 			soldierBank.Add (playerArmies);
 		}
@@ -72,8 +72,9 @@ public class AllocateSoldiers : MonoBehaviour {
 			// update game stats
 			UpdateTroopNumbers (country);
 			openingDeployment.UpdateDeploymentTable (currentPlayer, soldierBank [currentPlayer - 1]);
+
 			// last player places their last troop - end opening phase
-			if (currentPlayer == gameStats.numberOfPlayers & soldierBank [currentPlayer - 1] == 0) {
+			if (currentPlayer == boardSetUp.numberOfPlayers & soldierBank [currentPlayer - 1] == 0) {
 				EndOpeningPhase ();
 			}
 			// change player

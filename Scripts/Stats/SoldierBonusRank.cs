@@ -8,7 +8,6 @@ public class SoldierBonusRank : MonoBehaviour {
 	List<int[]> SolBonusRankStatic;
 	List<int> SoldierBonus;
 
-	GameStats gameStats;
 	SoldierBonus soldierBonus;
 	PlayerRank playerRank;
 
@@ -18,15 +17,10 @@ public class SoldierBonusRank : MonoBehaviour {
 	void Awake () {
 		soldierBonus = this.GetComponent<SoldierBonus> ();
 		playerRank = this.GetComponent<PlayerRank> ();
-		gameStats = this.GetComponent<GameStats> ();
-	}
-
-	void Start(){
-		numberOfPlayers = gameStats.numberOfPlayers;
 	}
 
 	// Ranks players based on territory count -- called in GameStats
-	public void BySolBonusRank(){
+	public void BySolBonusRank(int numberOfPlayers){
 		// build a list{player number(0), number of territories owned(1)} from landcounter dictionary
 		SolBonusRankStatic = new List<int[]> ();
 		for (int i = 1; i <= numberOfPlayers; i++) {

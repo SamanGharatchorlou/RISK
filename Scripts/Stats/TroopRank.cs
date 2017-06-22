@@ -8,23 +8,27 @@ public class TroopRank : MonoBehaviour {
 	List<int[]> TroopRankStatic;
 	List<int>TroopValues;
 
-	GameStats gamestats;
 	TroopCount troopCount;
 	PlayerRank playerRank;
+	BoardSetUp boardSetUp;
+
+	GameObject territories;
 
 	int numberOfPlayers;
 	bool activeCatagory;
 
-	// Use this for initialization
-	void Start () {
+	void Awake () {
 		playerRank = this.GetComponent<PlayerRank> ();
 		troopCount = this.GetComponent<TroopCount> ();
-		gamestats = this.GetComponent<GameStats> ();
-		numberOfPlayers = gamestats.numberOfPlayers;
+		boardSetUp = this.GetComponent<BoardSetUp> ();
+	}
+
+	void Start(){
 		activeCatagory = false;
 	}
 	
 	public void ByTroopCount(){
+		numberOfPlayers = boardSetUp.numberOfPlayers;
 		// build a list{player number(0), number of troops owned(1)} from troopCounter dictionary
 		TroopRankStatic = new List<int[]> ();
 		for (int i = 1; i <= numberOfPlayers; i++) {

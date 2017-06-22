@@ -11,6 +11,7 @@ public class Phases : MonoBehaviour {
 	DisplayTurn displayTurn;
 	GameInstructions gameInstructions;
 	public PhaseButton phaseButton;
+	ButtonColour buttonColour;
 
 	GameObject GUI;
 
@@ -21,6 +22,8 @@ public class Phases : MonoBehaviour {
 		receiveBonus = GUI.GetComponent<ReceiveBonus> ();
 		displayTurn = GUI.GetComponent<DisplayTurn> ();
 		gameInstructions = GUI.GetComponent<GameInstructions> ();
+		buttonColour = GUI.GetComponent<ButtonColour> ();
+
 		playerTurn = this.GetComponent<PlayerTurn> ();
 		deploySoldiers = this.GetComponent<DeploySoldiers> ();
 		startingPhase = true;
@@ -42,6 +45,8 @@ public class Phases : MonoBehaviour {
 			phaseButton.EndBattleText ();
 			receiveBonus.RemoveSoliderDisplayer ();
 			gameInstructions.SelectAtkCountry ();
+			// resets button colours
+			buttonColour.DeactiveateAll();
 		}
 	}
 
@@ -51,6 +56,8 @@ public class Phases : MonoBehaviour {
 			movementPhase = true;
 			phaseButton.EndTurnText ();
 			gameInstructions.SelectFromCountry ();
+			// resets button colours
+			buttonColour.DeactiveateAll();
 		}
 	}
 
@@ -65,6 +72,8 @@ public class Phases : MonoBehaviour {
 			receiveBonus.SoldierBonusDisplay (deploySoldiers.movingSoldierCount);
 
 			displayTurn.UpdateTurnText (playerTurn.CurrentPlayer ());
+			// resets button colours
+			buttonColour.DeactiveateAll();
 		}
 	}
 

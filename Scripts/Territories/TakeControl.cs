@@ -10,10 +10,11 @@ public class TakeControl : MonoBehaviour {
 	TerritoryCount territoryCount;
 	ContinentBonus continentBonus;
 	SoldierTransfer soldierTransfer;
-	TroopCount troopCount;
+	ButtonColour buttonColour;
 
-	GameObject scriptHolder, territories;
+	GameObject territories, GUI;
 
+	public bool controlTaken;
 	string attackingPlayer, defendingPlayer;
 
 	void Awake () {
@@ -24,11 +25,18 @@ public class TakeControl : MonoBehaviour {
 		territories = GameObject.FindGameObjectWithTag ("Territories");
 		territoryCount = territories.GetComponent<TerritoryCount> ();
 		continentBonus = territories.GetComponent<ContinentBonus> ();
+
+		GUI = GameObject.FindGameObjectWithTag ("GUI");
+		buttonColour = GUI.GetComponent<ButtonColour> ();
+	}
+
+	void Start(){
+		controlTaken = false;
 	}
 
 	// claims the land once called - removes defender and places attacker
 	public void ClaimLand(GameObject attackingCountry, GameObject defendingCountry){
-		
+		controlTaken = true;
 		defendingCountry.gameObject.tag = "SelectedCountry";
 		addSoldier = defendingCountry.GetComponent<AddSoldier> ();
 
@@ -43,6 +51,10 @@ public class TakeControl : MonoBehaviour {
 		// default transfers all attackers over to claimed land
 		soldierTransfer.DefaultTransfer(attackingCountry,defendingCountry);
 
+		// set button colours
+		buttonColour.BattleBattleColour(attackingCountry);
+		buttonColour.BattlePlusMinusColour (false);
+
 		// update the number of territories dictionary
 		territoryCount.UpdateTerritoryBank (attackingCountry, defendingCountry);
 
@@ -50,11 +62,12 @@ public class TakeControl : MonoBehaviour {
 		StartCoroutine(ExecuteAfterTime(0.1f));
 	}
 
-	// this script has been created because BuildContBonus doesnt work properly without the delayed call
+	//TODO: Still doesnt work properly!!!!
+	// this script has been created because UpdateContBonus doesnt work properly without the delayed call
 	IEnumerator ExecuteAfterTime(float time)
 	{
 		yield return new WaitForSeconds(time);
-		continentBonus.BuildContBonus ();
+		continentBonus.UpdateContBonus ();
 	}
 
 

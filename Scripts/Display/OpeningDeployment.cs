@@ -8,9 +8,9 @@ public class OpeningDeployment : MonoBehaviour {
 	List<Text[]> deploymentTable;
 
 	PlayerRank playerRank;
-	GameStats gameStats;
 	AllocateSoldiers allocateSoldiers;
 	TeamChecker teamChecker;
+	BoardSetUp boardSetUp;
 
 	GameObject territories, scriptHolder;
 
@@ -21,7 +21,7 @@ public class OpeningDeployment : MonoBehaviour {
 	void Awake(){
 		territories = GameObject.FindGameObjectWithTag ("Territories");
 		playerRank = territories.GetComponent<PlayerRank> ();
-		gameStats = territories.GetComponent<GameStats> ();
+		boardSetUp = territories.GetComponent<BoardSetUp> ();
 
 		scriptHolder = GameObject.FindGameObjectWithTag ("ScriptHolder");
 		allocateSoldiers = scriptHolder.GetComponent<AllocateSoldiers> ();
@@ -29,13 +29,13 @@ public class OpeningDeployment : MonoBehaviour {
 	}
 
 	// build the soldier deployment table for openingPhase
-	public void BuildDeployementTable(){
+	public void BuildDeployementTable(int numberOfPlayers){
 		deploymentTable = playerRank.rankTable;
 
 		// set header
 		deploymentTable[0][1].text="Soldiers Left";
 
-		for (int i = 1; i <= gameStats.numberOfPlayers; i++) {
+		for (int i = 1; i <= numberOfPlayers; i++) {
 			deploymentTable [i] [0].text = "Player" + i;
 			// set player 1 colour rest goes into update
 			//deploymentTable [i] [0].color = teamChecker.GetColour (i);
@@ -62,7 +62,7 @@ public class OpeningDeployment : MonoBehaviour {
 
 	// returns the next player
 	int NextPlayer(int currentPlayer){
-		if (currentPlayer < gameStats.numberOfPlayers)
+		if (currentPlayer < boardSetUp.numberOfPlayers)
 			return currentPlayer + 1;
 		else
 			return 1;

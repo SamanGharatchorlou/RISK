@@ -8,7 +8,6 @@ public class TroopCount : MonoBehaviour {
 	public Dictionary<string,int> troopCounter = new Dictionary<string, int> ();
 
 	BoardSetUp boardSetUp;
-	GameStats gameStats;
 	TeamChecker teamChecker;
 	TroopRank troopRank;
 
@@ -17,23 +16,17 @@ public class TroopCount : MonoBehaviour {
 	void Awake(){
 		scriptHolder = GameObject.FindGameObjectWithTag ("ScriptHolder");
 		teamChecker = scriptHolder.GetComponent<TeamChecker> ();
-
 		boardSetUp = this.GetComponent<BoardSetUp> ();
-		gameStats = this.GetComponent<GameStats> ();
 		troopRank = this.GetComponent<TroopRank> ();
 	}
 
-	void Start(){
-		// Number of troops owned by each player
-		for (int i = 1; i <= gameStats.numberOfPlayers; i++)
-			troopCounter.Add ("Player" + i, 0);
-	}
-
 	// builds a dictionary of the number of troops owned
-	public void BuildTroopBank() {
-		boardSetUp.PlayerLandBank (gameStats.numberOfPlayers);
-		for (int i = 0; i < gameStats.numberOfPlayers; i++)
-			troopCounter ["Player" + (boardSetUp.landBank [i] [0] + 1)] = boardSetUp.landBank [i] [1];
+	public void BuildTroopBank(int numberOfPlayers) {
+		//rebuild playerLand bank
+		boardSetUp.PlayerLandBank (numberOfPlayers);
+
+		for (int i = 0; i < numberOfPlayers; i++)
+			troopCounter.Add ("Player" + (boardSetUp.landBank [i] [0] + 1), boardSetUp.landBank [i] [1]);
 		// build rank system
 		troopRank.ByTroopCount();
 	}

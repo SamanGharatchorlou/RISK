@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-//TODO: only allow one movement phase - cannot move to multiple different countries
-
 // only allows troops to be transfered between connected territories
 public class LinkedTerritories : MonoBehaviour {
 

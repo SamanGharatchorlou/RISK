@@ -19,7 +19,8 @@ public class Attack : MonoBehaviour {
 	public GameObject attackingCountry, defendingCountry;
 	GameObject GUI, Territories;
 
-	bool canAttack, Neighbours, Enemies;
+	public bool canAttack;
+	bool Neighbours, Enemies;
 	public int attackingPlayer, defendingPlayer;
 	public int attackerArmySize, defenderArmySize;
 	int deadAttackers, deadDefenders;
@@ -78,13 +79,12 @@ public class Attack : MonoBehaviour {
 			attackerArmySize = countryManagement.GetArmySize (attackingCountry.name);
 			return attackerArmySize;
 		} else {
-			//TODO: incorporate into gameinstructions - same for def army size function below
-			print ("Select an attacker");
-			// returns a none sense value for checking
+			gameInstructions.NoSelection("attacker");
+			// returns a non sense value for checking
 			return -1;
 		}
 	}
-	// TODO: pressing battle after claim creates error becuase of no defender tag...fix
+
 	// Gets the defenders army size;
 	int DefenderArmySize(){
 		defendingCountry = GameObject.FindGameObjectWithTag ("DefendingCountry");
@@ -93,9 +93,8 @@ public class Attack : MonoBehaviour {
 			defenderArmySize = countryManagement.GetArmySize (defendingCountry.name);
 			return defenderArmySize;
 		} else {
-			//TODO: incorporate into gameinstructions - same for def army size function below
-			print ("Select a defender");
-			// returns a none sense value for checking
+			gameInstructions.NoSelection("defender");
+			// returns a non sense value for checking
 			return -1;
 		}
 	}

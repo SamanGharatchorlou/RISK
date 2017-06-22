@@ -9,20 +9,28 @@ public class CountrySelector : MonoBehaviour {
 	Phases phases;
 	AllocateSoldiers allocateSoldiers;
 	GameInstructions gameInstructions;
+	ButtonColour buttonColour;
+	ArmyMovement armyMovement;
+	TeamChecker teamChecker;
+	PlayerTurn playerTurn;
 
-	GameObject scriptHolder, GUI;
 	public GameObject country;
-	GameObject previousCountry;
+	GameObject scriptHolder, GUI;
+	GameObject previousCountry, toCountry;
 
-	void Start(){
+	void Awake(){
 		scriptHolder = GameObject.FindGameObjectWithTag ("ScriptHolder");
-		GUI = GameObject.FindGameObjectWithTag ("GUI");
-
 		allocateSoldiers = scriptHolder.GetComponent<AllocateSoldiers> ();
 		targetCountry = scriptHolder.GetComponent<TargetCountry> ();
 		phases = scriptHolder.GetComponent<Phases> ();
+		armyMovement = scriptHolder.GetComponent<ArmyMovement> ();
+		teamChecker = scriptHolder.GetComponent<TeamChecker> ();
+		playerTurn = scriptHolder.GetComponent<PlayerTurn> ();
+
+		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		displayEditor = GUI.GetComponent<DisplayEditor> ();
 		gameInstructions = GUI.GetComponent<GameInstructions> ();
+		buttonColour = GUI.GetComponent<ButtonColour> ();
 		}
 
 	void OnMouseDown(){
@@ -54,6 +62,13 @@ public class CountrySelector : MonoBehaviour {
 
 		// Runs display selected country, doesnt run when selecting attacker or defender
 		displayEditor.SelectedTerritory (country);
+
+		// activates and deactivates button colours
+		buttonColour.SetupPlusMinusColour ();
+		buttonColour.BattleAttackColour ();
+		buttonColour.MovementMoveColour ();
+		if (phases.movementPhase & armyMovement.fromCountry != null)
+			buttonColour.MovementPlusMinusColour(armyMovement.CanMoveArmy(country));
 	}
 		
 }

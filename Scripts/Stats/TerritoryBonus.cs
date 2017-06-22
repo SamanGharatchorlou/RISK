@@ -7,34 +7,32 @@ public class TerritoryBonus : MonoBehaviour {
 	// bonus soldiers received from territory bonues
 	public Dictionary<string,int> playerTerrBonus = new Dictionary<string,int> ();
 
-	GameStats gamestats;
 	TerritoryCount territoryCount;
 	SoldierBonus soldierBonus;
+	BoardSetUp boardSetUp;
+
+	GameObject territories;
 
 	int playerTerritoryBonus;
 
 	void Awake(){
-		gamestats = this.GetComponent<GameStats> ();
 		territoryCount = this.GetComponent<TerritoryCount> ();
 		soldierBonus = this.GetComponent<SoldierBonus> ();
-	}
 
-	void Start(){
-		// build initial dictionary
-		for (int i = 1; i <= gamestats.numberOfPlayers; i++)
-			playerTerrBonus.Add ("Player" + i, 0);
+		territories = GameObject.FindGameObjectWithTag ("Territories");
+		boardSetUp = territories.GetComponent<BoardSetUp> ();
 	}
 
 	// builds a dictionary of soldier bonuses from the number of territories owned
-	public void BuildTerritoryBonus(){
-		for (int i = 1; i <= gamestats.numberOfPlayers; i++) {
+	public void BuildTerritoryBonus(int numberOfPlayers){
+		for (int i = 1; i <= numberOfPlayers; i++) {
 			// bonus received
 			playerTerritoryBonus = Mathf.FloorToInt(territoryCount.landCounter ["Player" + i] / 3);
 			// minimun bonus = 3
 			if (playerTerritoryBonus < 3)
 				playerTerritoryBonus = 3;
 
-			playerTerrBonus ["Player" + i] = playerTerritoryBonus;
+			playerTerrBonus.Add("Player"+i,playerTerritoryBonus);
 		}
 	}
 
@@ -51,7 +49,7 @@ public class TerritoryBonus : MonoBehaviour {
 			playerTerrBonus [defendingPlayer] = 3;
 
 		// update soldier bonus script (territory number + continent bonus)
-		soldierBonus.UpdateSoldierBonus ();
+		soldierBonus.UpdateSoldierBonus (boardSetUp.numberOfPlayers);
 	}
 
 }

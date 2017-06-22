@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//TODO: once attack button has been presses any country selection is the defending country until either battle is presses
+//		or attack has been pressed again to deactivate bool or something
+
 public class TargetCountry : MonoBehaviour {
 
 	DisplayEditor displayEditor;
+	ButtonColour buttonColour;
 
 	GameObject GUI;
 	GameObject attackingCountry, defendingCountry, previousCountry;
@@ -14,14 +18,15 @@ public class TargetCountry : MonoBehaviour {
 	void Awake(){
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		displayEditor = GUI.GetComponent<DisplayEditor> ();
+		buttonColour = GUI.GetComponent<ButtonColour> ();
 	}
 
 	void Start(){
 		selectingDefender = false;
 	}
-
-	//Label target as the attacker and sets up SetDefender function
-	public void SetAttacker(){
+		
+	//Label target as the attacker and sets up SetDefender function - Attack button
+	void SetAttacker(){
 		// Remove previous attckers tag
 		previousCountry = GameObject.FindGameObjectWithTag ("AttackingCountry");
 		if (previousCountry != null)
@@ -36,6 +41,9 @@ public class TargetCountry : MonoBehaviour {
 			displayEditor.AttackingTerritory (attackingCountry);
 			// Allows SetDefender to be called as the following selection
 			selectingDefender = true;
+
+			buttonColour.BattleAttackColour ();
+			buttonColour.BattlePlusMinusColour (selectingDefender);
 		}
 	}
 
@@ -51,8 +59,10 @@ public class TargetCountry : MonoBehaviour {
 		defendingCountry.gameObject.tag = "DefendingCountry";
 
 		displayEditor.BattlingTerritories (attackingCountry,defendingCountry);
+
 		selectingDefender = false;
 
+		buttonColour.BattleBattleColour (defendingCountry);
 	}
 
 }

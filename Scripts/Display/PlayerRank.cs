@@ -8,7 +8,6 @@ public class PlayerRank : MonoBehaviour {
 
 	public List <Text[]> rankTable;
 
-	GameStats gameStats;
 	TerritoryRank territoryRank;
 	TerritoryCount territoryCount;
 	TroopRank troopRank;
@@ -24,11 +23,10 @@ public class PlayerRank : MonoBehaviour {
 	Vector3 cellPos, adjustXPos, adjustYPos;
 
 	public bool terrCountCat, troopCountCat, solBonusCat;
+	int NumbOfPlayers;
 	string playerNumber;
-	int numberOfPlayers;
 
 	void Awake () {
-		gameStats = this.GetComponent<GameStats> ();
 		territoryRank = this.GetComponent<TerritoryRank> ();
 		territoryCount = this.GetComponent<TerritoryCount> ();
 		troopRank = this.GetComponent<TroopRank> ();
@@ -37,17 +35,12 @@ public class PlayerRank : MonoBehaviour {
 		soldierBonus = this.GetComponent<SoldierBonus> ();
 	}
 
-	void Start(){
-		numberOfPlayers = gameStats.numberOfPlayers;
-		BuildTable ();
-		// opening deployement script here !!!! _---------------
-	}
-
 	// build the player stats table (incl headers)
-	void BuildTable(){
+	public void BuildRankTable(int numberOfPlayers){
+		NumbOfPlayers = numberOfPlayers;
 		rankTable = new List<Text[]> ();
 		// build a 2 x numberOfPlayers table of text boxes (cells)
-		for (int y = 0; y <= numberOfPlayers; y++)
+		for (int y = 0; y <= NumbOfPlayers; y++)
 			rankTable.Add (new Text[]{ CreateCell(), CreateCell() });
 
 		// set x and y distances between cells
@@ -94,7 +87,7 @@ public class PlayerRank : MonoBehaviour {
 	// rank by troop count
 	public void RankedTroopCount(){
 		// build table
-		for (int j = 1; j <= numberOfPlayers; j++) {
+		for (int j = 1; j <= NumbOfPlayers; j++) {
 			playerNumber = "Player" + troopRank.TroopCountPlayerRanks [j - 1];
 			// set player number
 			rankTable [j] [0].text = playerNumber;
@@ -106,7 +99,7 @@ public class PlayerRank : MonoBehaviour {
 	// rank by territroy count
 	public void RankedTerrCount(){
 		// build table
-		for (int i = 1; i <= numberOfPlayers; i++) {
+		for (int i = 1; i <= NumbOfPlayers; i++) {
 			playerNumber = "Player" + territoryRank.TerrCountPlayerRanks [i - 1];
 			// set player number
 			rankTable [i] [0].text = playerNumber;
@@ -118,7 +111,7 @@ public class PlayerRank : MonoBehaviour {
 	// rank by soldier bonus
 	public void RankedSoldierBonus(){
 		// build table
-		for (int k = 1; k <= numberOfPlayers; k++) {
+		for (int k = 1; k <= NumbOfPlayers; k++) {
 			playerNumber = "Player" + soldierBonusRank.SolBonusPlayerRanks [k - 1];
 			// set player number
 			rankTable [k] [0].text = playerNumber;

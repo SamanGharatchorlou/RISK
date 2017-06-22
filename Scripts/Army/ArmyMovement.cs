@@ -15,12 +15,14 @@ public class ArmyMovement : MonoBehaviour {
 	GameInstructions gameInstructions;
 	TroopCount troopCount;
 	PlayerTurn playerTurn;
+	ButtonColour buttonColour;
 
 	public GameObject fromCountry, toCountry;
-
+	GameObject storedFromCtry, storedToCtry;
 	GameObject GUI, territories;
 	GameObject soldierToTransfer;
 
+	public bool movementDone;
 	bool availablePathing, sameTeam;
 
 	int fromArmySize, toArmySize;
@@ -29,6 +31,7 @@ public class ArmyMovement : MonoBehaviour {
 	void Awake(){
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		gameInstructions = GUI.GetComponent<GameInstructions> ();
+		buttonColour = GUI.GetComponent<ButtonColour> ();
 
 		territories = GameObject.FindGameObjectWithTag ("Territories");
 		troopCount = territories.GetComponent<TroopCount> ();
@@ -48,6 +51,7 @@ public class ArmyMovement : MonoBehaviour {
 			fromCountry = GameObject.FindGameObjectWithTag ("SelectedCountry");
 			fromCountry.tag = "Untagged";
 			gameInstructions.SelectToCountry (fromCountry.name);
+			buttonColour.MovementRemoveColour ();
 		}
 	}
 
@@ -57,7 +61,7 @@ public class ArmyMovement : MonoBehaviour {
 		if (phases.movementPhase) {
 			toCountry = GameObject.FindGameObjectWithTag ("SelectedCountry");
 			// only runs if two countries selected
-			if (CanMoveArmy (fromCountry, toCountry) & fromArmySize > 1)
+			if (CanMoveArmy (toCountry) & fromArmySize > 1)
 				MoveSoldier (fromCountry, toCountry);
 		}
 	}
@@ -68,9 +72,46 @@ public class ArmyMovement : MonoBehaviour {
 		if (phases.movementPhase) {
 			toCountry = GameObject.FindGameObjectWithTag ("SelectedCountry");
 			// only runs if two countries selected
-			if (CanMoveArmy (fromCountry, toCountry) & toArmySize > 1)
+			if (CanMoveArmy (toCountry) & toArmySize > 1)
 				MoveSoldier (toCountry, fromCountry);
 		}
+	}
+
+	// makes the required checks to ensure soldiers can move between countries
+	public bool CanMoveArmy(GameObject toCountry){
+		// checks if a movement phase has already been done
+		if (storedFromCtry != null) {
+			// checks if the fromCountry or toCountry has changed
+			if (fromCountry != storedFromCtry & fromCountry != storedToCtry)
+				movementDone = true;
+			if (!movementDone & toCountry != storedFromCtry & toCountry != storedToCtry)
+				movementDone = true;
+		}
+
+		// checks who owns the given countries
+		fromCountryTeam = teamChecker.GetPlayer (fromCountry);
+		toCountryTeam = teamChecker.GetPlayer (toCountry);
+		sameTeam = false;
+		if (fromCountryTeam == toCountryTeam)
+			sameTeam = true;
+
+		// checks that there's at least 1 man left behind - create variables for +/- script to check as they have diff requirements
+		fromArmySize = countryManagement.GetArmySize(fromCountry.name);
+		toArmySize = countryManagement.GetArmySize (toCountry.name);
+
+		// checks if the countries are connected
+		availablePathing = false;
+		availablePathing = linkedTerritories.SafePath (fromCountry, toCountry);
+
+		// checks if all conditions are satisfied
+		if (sameTeam & availablePathing & !movementDone) {
+			// stores the first pair of coutries that troops are moved across
+			storedFromCtry = fromCountry;
+			storedToCtry = toCountry;
+			return true;
+		}
+		else
+			return false;
 	}
 
 	// moves a soldier fromCountry to toCountry - called by fwd and back buttons
@@ -95,29 +136,4 @@ public class ArmyMovement : MonoBehaviour {
 		countryManagement.ChangeArmySize (toCountry, 1);
 	}
 		
-
-	// makes the required checks to ensure soldiers can move between countries
-	bool CanMoveArmy(GameObject fromCountry, GameObject toCountry){
-		// checks who owns the given countries
-		fromCountryTeam = teamChecker.GetPlayer (fromCountry);
-		toCountryTeam = teamChecker.GetPlayer (toCountry);
-		sameTeam = false;
-		if (fromCountryTeam == toCountryTeam)
-			sameTeam = true;
-
-		// checks that there's at least 1 man left behind - create variables for +/- script to check as they have diff requirements
-		fromArmySize = countryManagement.GetArmySize(fromCountry.name);
-		toArmySize = countryManagement.GetArmySize (toCountry.name);
-
-		// checks if the countries are connected
-		availablePathing = false;
-		availablePathing = linkedTerritories.SafePath (fromCountry, toCountry);
-
-		// checks if all conditions are satisfied
-		if (sameTeam & availablePathing)
-			return true;
-		else
-			return false;
-	}
-
 }
