@@ -5,7 +5,7 @@ using UnityEngine;
 public class SoldierBonus : MonoBehaviour {
 
 	// total bonus recevied from continent and territory bonuses
-	public Dictionary<string,int> soldierIncome = new Dictionary<string,int>();
+	public Dictionary<string,int> soldierIncome;
 
 	TerritoryBonus territoryBonus;
 	ContinentBonus continentBonus;
@@ -18,6 +18,10 @@ public class SoldierBonus : MonoBehaviour {
 		territoryBonus = this.GetComponent<TerritoryBonus> ();
 		continentBonus = this.GetComponent<ContinentBonus> ();
 		soldierBonusRank = this.GetComponent<SoldierBonusRank> ();
+	}
+
+	void Start(){
+		soldierIncome = new Dictionary<string,int>();
 	}
 
 	// build a  soldier bonus dictionary (territory bonus + continent bonus)

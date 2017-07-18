@@ -9,7 +9,6 @@ public class ChangeCatagory : MonoBehaviour {
 	public List <Text> catagories;
 	List <string> catagoryLabels;
 
-
 	PlayerRank playerRank;
 	TroopRank troopRank;
 	TerritoryRank territoryRank;
@@ -23,7 +22,8 @@ public class ChangeCatagory : MonoBehaviour {
 	Vector3 adjustPosX, adjustPosY;
 
 	public bool terrCountCat, troopCountCat, solBonusCat;
-	string territoryCount, troopCount, soldierBonus, stored0String, activeCatagory;
+	string territoryCount, troopCount, soldierBonus, stored0String;
+	public string activeCatagory;
 
 	// Use this for initialization
 	void Awake() {

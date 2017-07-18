@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// TODO: think about adding a 3D selection arrow signalling who they have just selected?
+
 public class CountrySelector : MonoBehaviour {
 
 	DisplayEditor displayEditor;
@@ -11,12 +13,11 @@ public class CountrySelector : MonoBehaviour {
 	GameInstructions gameInstructions;
 	ButtonColour buttonColour;
 	ArmyMovement armyMovement;
-	TeamChecker teamChecker;
-	PlayerTurn playerTurn;
 
 	public GameObject country;
 	GameObject scriptHolder, GUI;
-	GameObject previousCountry, toCountry;
+	GameObject previousCountry;
+	GameObject fromCountry, toCountry;
 
 	void Awake(){
 		scriptHolder = GameObject.FindGameObjectWithTag ("ScriptHolder");
@@ -24,8 +25,6 @@ public class CountrySelector : MonoBehaviour {
 		targetCountry = scriptHolder.GetComponent<TargetCountry> ();
 		phases = scriptHolder.GetComponent<Phases> ();
 		armyMovement = scriptHolder.GetComponent<ArmyMovement> ();
-		teamChecker = scriptHolder.GetComponent<TeamChecker> ();
-		playerTurn = scriptHolder.GetComponent<PlayerTurn> ();
 
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		displayEditor = GUI.GetComponent<DisplayEditor> ();
@@ -33,11 +32,11 @@ public class CountrySelector : MonoBehaviour {
 		buttonColour = GUI.GetComponent<ButtonColour> ();
 		}
 
+	//Remove presvious country selected and add tag to new country selection
 	void OnMouseDown(){
-		//Remove presvious country selected and add tag to new country selection
-		previousCountry = GameObject.FindGameObjectWithTag ("SelectedCountry");
-
+		
 		// removes tag from previously selected country
+		previousCountry = GameObject.FindGameObjectWithTag ("SelectedCountry");
 		if (previousCountry != null)
 			previousCountry.gameObject.tag = "Untagged";
 
@@ -49,26 +48,26 @@ public class CountrySelector : MonoBehaviour {
 		if (phases.movementPhase & previousCountry == null)
 			gameInstructions.MoveTroopButtons (country.name,country.name);
 
+		// selects countries to move troops between
+		if (armyMovement.movementSelected)
+			armyMovement.MovementCountries (country);
+
+		// activates and deactivates button colours
+		buttonColour.SetupPlusMinusColour ();
+		buttonColour.BattleAttackColour (targetCountry.selectingDefender);
+
 		// sets the target as "defender" rather than "selectedCountry" when target country to attack
-		if (targetCountry.selectingDefender == true) {
+		if (targetCountry.selectingDefender) {
 			targetCountry.SetDefender ();
 			return;
 		}
 			
 		// place soldiers during the opening phase script
-		if (phases.openingPhase) {
+		if (phases.openingPhase)
 			allocateSoldiers.DropSoldier (country);
-		}
-
+			
 		// Runs display selected country, doesnt run when selecting attacker or defender
 		displayEditor.SelectedTerritory (country);
-
-		// activates and deactivates button colours
-		buttonColour.SetupPlusMinusColour ();
-		buttonColour.BattleAttackColour ();
-		buttonColour.MovementMoveColour ();
-		if (phases.movementPhase & armyMovement.fromCountry != null)
-			buttonColour.MovementPlusMinusColour(armyMovement.CanMoveArmy(country));
 	}
 		
 }

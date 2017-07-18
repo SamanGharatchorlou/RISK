@@ -26,14 +26,15 @@ public class TroopRank : MonoBehaviour {
 	void Start(){
 		activeCatagory = false;
 	}
-	
+
+	// sorts players by troop count
 	public void ByTroopCount(){
 		numberOfPlayers = boardSetUp.numberOfPlayers;
-		// build a list{player number(0), number of troops owned(1)} from troopCounter dictionary
+		// build a list{player number, number of troops owned} from troopCounter dictionary
 		TroopRankStatic = new List<int[]> ();
 		for (int i = 1; i <= numberOfPlayers; i++) {
 			TroopRankStatic.Add (new int[2]);
-			TroopRankStatic [i-1] [0] = i;
+			TroopRankStatic [i - 1] [0] = i;
 			TroopRankStatic [i - 1] [1] = troopCount.troopCounter ["Player" + i];
 		}
 		// list of only the troop counts (values only)
@@ -48,11 +49,11 @@ public class TroopRank : MonoBehaviour {
 		// list of players in ranked order
 		TroopCountPlayerRanks = new List<int> ();
 
-		// iterate through the ordered TerritoryCounts
+		// iterate through the ordered TroopValues
 		for (int k = 0; k < numberOfPlayers; k++) {
-			// iterate through TerrRankStatic territory counts
+			// iterate through TroopRankStatic territory counts
 			for (int l = 0; l < TroopRankStatic.Count; l++) {
-				// build list of players ranked by territory counts
+				// build list of players ranked by troop counts
 				if (TroopValues [k] == TroopRankStatic [l] [1]) {
 					TroopCountPlayerRanks.Add (TroopRankStatic [l] [0]);
 					// remove the player just chosen to prevent duplicates

@@ -9,16 +9,21 @@ public class SoldierTransfer : MonoBehaviour {
 	CountryManagement countryManagement;
 	Attack attack;
 	Phases phases;
+	ButtonColour buttonColour;
 
-	GameObject fromCountry, toCountry;
+	GameObject GUI;
+	public GameObject fromCountry, toCountry;
 
-	int attackerNumbers;
+	public int attackerNumbers;
 
 	void Awake(){
 		armyMovement = this.GetComponent<ArmyMovement> ();
 		countryManagement = this.GetComponent<CountryManagement> ();
 		attack = this.GetComponent<Attack> ();
 		phases = this.GetComponent<Phases> ();
+
+		GUI = GameObject.FindGameObjectWithTag ("GUI");
+		buttonColour = GUI.GetComponent<ButtonColour> ();
 	}
 
 	// default - move all attackers over
@@ -29,17 +34,19 @@ public class SoldierTransfer : MonoBehaviour {
 		}
 	}
 
-	//TODO: if +/- is pressed before a claim has activated gives error
-
 	// moves troops from attacking country to claimed country (----- + button -----)
 	public void FwdTransferTroops(){
 		// only run code on battle phase
 		if (phases.battlePhase) {
 			fromCountry = attack.attackingCountry;
 			toCountry = attack.defendingCountry;
-			// must leave 1 man behind
-			if (countryManagement.GetArmySize (fromCountry.name) > 1)
-				armyMovement.MoveSoldier (fromCountry, toCountry);
+			// error prevention
+			if (fromCountry != null) {
+				// must leave 1 man behind
+				if (countryManagement.GetArmySize (fromCountry.name) > 1)
+					armyMovement.MoveSoldier (fromCountry, toCountry);
+				buttonColour.BattlePlusMinusColour2 (fromCountry, toCountry, 0);
+			}
 		}
 	}
 		
@@ -53,9 +60,12 @@ public class SoldierTransfer : MonoBehaviour {
 			attackerNumbers = attack.attackerArmySize - 1;
 			if (attackerNumbers > 3)
 				attackerNumbers = 3;
-			// if attacker attacked with 3 or more must leave at least those 3 behind
-			if (countryManagement.GetArmySize (toCountry.name) > attackerNumbers) {
-				armyMovement.MoveSoldier (toCountry, fromCountry);
+			// error prevention
+			if (fromCountry != null) {
+				// if attacker attacked with 3 or more must leave at least those 3 behind
+				if (fromCountry != null & toCountry != null & countryManagement.GetArmySize (toCountry.name) > attackerNumbers)
+					armyMovement.MoveSoldier (toCountry, fromCountry);
+				buttonColour.BattlePlusMinusColour2 (fromCountry, toCountry, attackerNumbers);
 			}
 		}
 	}

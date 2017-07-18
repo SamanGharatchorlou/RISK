@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 // Sets up the board - call most opening scripts here that begin the game
 public class BoardSetUp : MonoBehaviour {
 
 	public List <int[]> landBank;
+
+	public InputField inputData;
 
 	AddSoldier addSoldier;
 	ArmyManagement armyManagement;
@@ -27,6 +30,13 @@ public class BoardSetUp : MonoBehaviour {
 	int territoryCount, territoriesAllocated, territoriesLeft;
 	int randomIndex, update, stroredValue;
 
+	string inputValue;
+
+	bool gameStarted;
+
+	GameObject inputBox;
+	InputField someInput;
+
 	void Awake (){
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		openingDeployment = GUI.GetComponent<OpeningDeployment> ();
@@ -39,31 +49,39 @@ public class BoardSetUp : MonoBehaviour {
 		phases = scriptHolder.GetComponent<Phases> ();
 		playerTurn = scriptHolder.GetComponent<PlayerTurn> ();
 
-		gameStats = this.GetComponent<GameStats> ();
+		gameStats = this.GetComponentInChildren<GameStats> ();
+
+		inputBox = GameObject.Find ("InputField");
 	}
 
-	// TODO: change into restart game button after selected (inlc. confirmation is selected)
+
 
 	// Starts the game - runs all required functions (Start Game button)
 	public void StartGame(){
-		//TODO: allow player to adjust this at start of game
-		// input number of players
-		numberOfPlayers = 3;
+		if (numberOfPlayers <= 5 & numberOfPlayers >= 3) {
+			// set up playerTurn list
+			playerTurn.ChangePlayerCount (numberOfPlayers);
+			// randomly distribute all territories to players by placing 1 soldier on it
+			PlayerLandBank (numberOfPlayers);
+			SetBoard ();
+			// build game stats
+			gameStats.SetUpGameStats (numberOfPlayers);
+			// give players starting armies
+			allocateSoldiers.BuildSoldierBank (numberOfPlayers);
+			// set up opening deployment
+			openingDeployment.BuildDeployementTable (numberOfPlayers);
+			// instruction text
+			gameInstructions.OpeningPhasePlacement ();
+			// remove input box from game
+			Destroy (inputBox);
+			// removes all accidental country selections before game starts
+			ClearSelections();
+		}
+	}
 
-		// set up playerTurn list
-		playerTurn.ChangePlayerCount (numberOfPlayers);
-
-		// randomly distribute all territories
-		PlayerLandBank (numberOfPlayers);
-		SetBoard ();
-		// build game stats
-		gameStats.SetUpGameStats (numberOfPlayers);
-		// give players starting armies
-		allocateSoldiers.BuildSoldierBank(numberOfPlayers);
-		// set up opening deployment
-		openingDeployment.BuildDeployementTable(numberOfPlayers);
-		// instruction text
-		gameInstructions.OpeningPhasePlacement();
+	// player inputs number of players
+	public void InputPlayerNumbers(string playerNumbers){
+		numberOfPlayers = int.Parse (playerNumbers);
 	}
 
 	// builds a bank with the number of territories allocated by each player at start of game
@@ -125,4 +143,15 @@ public class BoardSetUp : MonoBehaviour {
 		return stroredValue;
 	}
 
+	// removes all 'selectedCountry' tags for start of game
+	public void ClearSelections(){
+		GameObject[] countries;
+		countries = GameObject.FindGameObjectsWithTag ("SelectedCountry");
+		foreach (GameObject country in countries) {
+			country.gameObject.tag = "Untagged";
+		}
+	}
+
 }
+
+//TODO: no need for starting phase?

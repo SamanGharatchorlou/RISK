@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class OpeningDeployment : MonoBehaviour {
 
-	List<Text[]> deploymentTable;
+	public List<Text[]> deploymentTable;
 
 	PlayerRank playerRank;
 	AllocateSoldiers allocateSoldiers;
@@ -13,8 +13,6 @@ public class OpeningDeployment : MonoBehaviour {
 	BoardSetUp boardSetUp;
 
 	GameObject territories, scriptHolder;
-
-	//int nextPlayer;
 
 	string soldiersLeft;
 
@@ -31,21 +29,19 @@ public class OpeningDeployment : MonoBehaviour {
 	// build the soldier deployment table for openingPhase
 	public void BuildDeployementTable(int numberOfPlayers){
 		deploymentTable = playerRank.rankTable;
-
+	
 		// set header
 		deploymentTable[0][1].text="Soldiers Left";
 
 		for (int i = 1; i <= numberOfPlayers; i++) {
 			deploymentTable [i] [0].text = "Player" + i;
 			// set player 1 colour rest goes into update
-			//deploymentTable [i] [0].color = teamChecker.GetColour (i);
 			soldiersLeft = allocateSoldiers.soldierBank [i - 1].ToString ();
 			deploymentTable [i] [1].text = soldiersLeft;
 		}
 		// set player 1 colour -> green
 		deploymentTable [1] [0].color = teamChecker.GetColour (1);
 		deploymentTable [1] [1].color = teamChecker.GetColour (1);
-
 	}
 
 	// update the soldier deployment table
@@ -54,10 +50,10 @@ public class OpeningDeployment : MonoBehaviour {
 		soldiersLeft = soldiers.ToString ();
 		deploymentTable [currentPlayer] [1].text = soldiersLeft;
 		// update display colour of player placing troops
+		ResetColour();
 		deploymentTable [NextPlayer(currentPlayer)] [0].color = teamChecker.GetColour (NextPlayer(currentPlayer));
 		deploymentTable [NextPlayer(currentPlayer)] [1].color = teamChecker.GetColour (NextPlayer(currentPlayer));
-		// reset previous player colour
-		ResetColour(currentPlayer);
+
 	}
 
 	// returns the next player
@@ -69,18 +65,11 @@ public class OpeningDeployment : MonoBehaviour {
 	}
 
 	// resets the colour of a row
-	void ResetColour(int rowNumber){
-		deploymentTable [rowNumber] [0].color = teamChecker.GetColour (6);
-		deploymentTable [rowNumber] [1].color = teamChecker.GetColour (6);
+	public void ResetColour(){
+		for (int i = 1; i <= boardSetUp.numberOfPlayers; i++) {
+			deploymentTable [i] [0].color = teamChecker.GetColour (6);
+			deploymentTable [i] [1].color = teamChecker.GetColour (6);
+		}
 	}
-
-	// resets rank table for setup phase
-	public void ResetRankTable(int currentPlayer){
-		deploymentTable [0] [1].text = "";
-		// remove player 1 colour from table
-		ResetColour (1);
-	}
-
-
 
 }

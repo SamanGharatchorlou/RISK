@@ -5,6 +5,8 @@ using UnityEngine;
 // activates the different phases of the game
 public class Phases : MonoBehaviour {
 
+	GameObject[] deployedSoldiers;
+
 	DeploySoldiers deploySoldiers;
 	PlayerTurn playerTurn;
 	ReceiveBonus receiveBonus;
@@ -12,8 +14,18 @@ public class Phases : MonoBehaviour {
 	GameInstructions gameInstructions;
 	public PhaseButton phaseButton;
 	ButtonColour buttonColour;
+	ArmyMovement armyMovement;
+	TerritoryCount territoryCount;
+	TerritoryRank territoryRank;
+	OpeningDeployment openingDeployment;
+	ChangeCatagory changeCategory;
 
-	GameObject GUI;
+	//test
+	AIController aiController;
+	AttackPhase attackPhase;
+	MovementPhase AImovementPhase;
+
+	GameObject GUI, territories;
 
 	public bool startingPhase, openingPhase, setupPhase, battlePhase, movementPhase;
 
@@ -23,57 +35,127 @@ public class Phases : MonoBehaviour {
 		displayTurn = GUI.GetComponent<DisplayTurn> ();
 		gameInstructions = GUI.GetComponent<GameInstructions> ();
 		buttonColour = GUI.GetComponent<ButtonColour> ();
+		openingDeployment = GUI.GetComponent<OpeningDeployment> ();
+
+		territories = GameObject.FindGameObjectWithTag ("Territories");
+		territoryCount = territories.GetComponent<TerritoryCount> ();
+		territoryRank = territories.GetComponent<TerritoryRank> ();
+		changeCategory = territories.GetComponent<ChangeCatagory> ();
 
 		playerTurn = this.GetComponent<PlayerTurn> ();
 		deploySoldiers = this.GetComponent<DeploySoldiers> ();
-		startingPhase = true;
+		armyMovement = this.GetComponent<ArmyMovement> ();
+
+		aiController = this.GetComponent<AIController> ();
+		attackPhase = this.GetComponent<AttackPhase> ();
+		AImovementPhase = this.GetComponent<MovementPhase> ();
 	}
 
 	void Start () {
+		startingPhase = true;
 		openingPhase = false;
 		setupPhase = false;
 		battlePhase = false;
 		movementPhase = false;
 		phaseButton.EndSetupText ();
 	}
+
+	public void EndOpeningPhase(){
+		// start setup phase
+		openingPhase = false;
+		setupPhase = true;
+		// remove 'soldiers left' text
+		openingDeployment.deploymentTable [0] [1].text = "";
+		// set up bonus soldier text for setup phase
+		deploySoldiers.BonusStore();
+		// build the 3 category headers
+		changeCategory.BuildCatHeaders();
+		// display ranking system
+		changeCategory.RotateCatagory ();
+		// display player 1 turn
+		displayTurn.UpdateTurnText(1);
+		// update game instructions
+		gameInstructions.PlaceTroops();
+	}
+
 	
 	void EndSetupPhase(){
 		// only runs if all soldiers have been deployed
-		if (setupPhase & deploySoldiers.movingSoldierCount == 0) {
+		if (setupPhase & deploySoldiers.soldiersLeft == 0) {
+			// set bools for in game checking
 			setupPhase = false;
 			battlePhase = true;
+			// change phase button text
 			phaseButton.EndBattleText ();
+			// remove unneeded display
 			receiveBonus.RemoveSoliderDisplayer ();
+			// adjust game instructions
 			gameInstructions.SelectAtkCountry ();
 			// resets button colours
 			buttonColour.DeactiveateAll();
+			buttonColour.BattleAttackColour (false);
+			// remove all "DeployedSoldier" tags
+			deployedSoldiers = GameObject.FindGameObjectsWithTag("DeployedSoldier");
+			foreach (GameObject soldier in deployedSoldiers)
+				soldier.tag = "Untagged";
+			/*
+			// testing mode
+			if(!openingPhase)
+				attackPhase.AIAttackCountry ();
+			*/
 		}
 	}
 
 	void EndBattlePhase(){
 		if (battlePhase) {
+			// set bools for in game checking
 			battlePhase = false;
 			movementPhase = true;
+			// change phase button text
 			phaseButton.EndTurnText ();
-			gameInstructions.SelectFromCountry ();
+			// adjust game instructions
+			gameInstructions.SelectMoveButton ();
 			// resets button colours
 			buttonColour.DeactiveateAll();
+			// activeate move button colour
+			buttonColour.MovementMoveColour ("active");
+
+			/*
+			// testing mode
+			if(!openingPhase)
+				AImovementPhase.AIMoveSoldiers ();
+			*/
 		}
 	}
 
 	void EndMovementPhase(){
 		if (movementPhase) {
+			// set bools for in game checking
 			movementPhase = false;
 			setupPhase = true;
-			phaseButton.EndSetupText ();
 			//end player turn
 			playerTurn.NextPlayer ();
+			// skips defeated players turn
+			if (territoryCount.landCounter ["Player" + playerTurn.CurrentPlayer ()] == 0) {
+				// ends game if required
+				DoesGameEnd ();
+				setupPhase = false;
+				movementPhase = true;
+				EndMovementPhase ();
+				return;
+			}
+			// change phase button text
+			phaseButton.EndSetupText ();
 			// displays soldier bonus display
-			receiveBonus.SoldierBonusDisplay (deploySoldiers.movingSoldierCount);
-
+			receiveBonus.SoldierBonusDisplay (deploySoldiers.soldiersLeft);
+			// changes player turn display
 			displayTurn.UpdateTurnText (playerTurn.CurrentPlayer ());
 			// resets button colours
 			buttonColour.DeactiveateAll();
+			// reset movement phase variables
+			armyMovement.ResetMoveVariables();
+			// activates the next AI players turn
+			aiController.CheckPlayer ();
 		}
 	}
 
@@ -85,6 +167,18 @@ public class Phases : MonoBehaviour {
 			EndBattlePhase ();
 		else
 			EndMovementPhase ();
+	}
+
+	// ends game if only 1 more player is left
+	void DoesGameEnd(){
+		// gets the number of the player ranked 1st and 2nd by territory count
+		string playerRank1 = "Player" + territoryRank.TerrCountPlayerRanks [0];
+		string playerRank2 = "Player" + territoryRank.TerrCountPlayerRanks [1];
+		// if this player has no territories game is over
+		if (territoryCount.landCounter [playerRank2] == 0) {
+			// do something to say game is over
+			print("Game Over. The winner is " + playerRank1);
+		}
 	}
 
 }

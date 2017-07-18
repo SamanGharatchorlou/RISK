@@ -35,6 +35,7 @@ public class TakeControl : MonoBehaviour {
 	}
 
 	// claims the land once called - removes defender and places attacker
+	// NOTE: do not change order of commands below
 	public void ClaimLand(GameObject attackingCountry, GameObject defendingCountry){
 		controlTaken = true;
 		defendingCountry.gameObject.tag = "SelectedCountry";
@@ -51,24 +52,26 @@ public class TakeControl : MonoBehaviour {
 		// default transfers all attackers over to claimed land
 		soldierTransfer.DefaultTransfer(attackingCountry,defendingCountry);
 
-		// set button colours
-		buttonColour.BattleBattleColour(attackingCountry);
-		buttonColour.BattlePlusMinusColour (false);
-
 		// update the number of territories dictionary
 		territoryCount.UpdateTerritoryBank (attackingCountry, defendingCountry);
 
+		// update continent bonus
+		continentBonus.UpdateContBonus ();
+
+		// set button colours
+		buttonColour.BattleBattleColour(attackingCountry,defendingCountry);
+		buttonColour.BattleAttackColour (false);
+		buttonColour.BattlePlusMinusColour (false);
+
 		// update continent bonus dictionary - call wait time function
-		StartCoroutine(ExecuteAfterTime(0.1f));
+		//StartCoroutine(ExecuteAfterTime(0.1f));
 	}
 
-	//TODO: Still doesnt work properly!!!!
 	// this script has been created because UpdateContBonus doesnt work properly without the delayed call
 	IEnumerator ExecuteAfterTime(float time)
 	{
 		yield return new WaitForSeconds(time);
 		continentBonus.UpdateContBonus ();
 	}
-
 
 }

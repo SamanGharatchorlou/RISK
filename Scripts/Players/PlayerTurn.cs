@@ -1,41 +1,46 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerTurn : MonoBehaviour {
 
+	public Text TurnNumberText;
+	public List<bool> turnOrder;
+	public float[][] playerColourList;
+
 	ContinentBonus continentBonus;
 	DeploySoldiers deploySoldiers;
-	ArmyMovement armyMovement;
+	Phases phases;
+	StarterPhase starterPhase;
+	SetupPhase setupPhase;
 
 	GameObject territories;
 
 	bool player1, player2, player3, player4, player5;
 
-	public List<bool> turnOrder;
-	public float[][] playerColourList;
-
 	public int turn;
 
 	// Set up array of player colours
 	void Awake () {
+		deploySoldiers = this.GetComponent<DeploySoldiers> ();
+		phases = this.GetComponent<Phases> ();
+		starterPhase = this.GetComponent<StarterPhase> ();
+		setupPhase = this.GetComponent<SetupPhase> ();
+
 		territories = GameObject.FindGameObjectWithTag ("Territories");
 		continentBonus = territories.GetComponent<ContinentBonus> ();
-		deploySoldiers = this.GetComponent<DeploySoldiers> ();
-		armyMovement = this.GetComponent<ArmyMovement> ();
 	}
 
 	void Start(){
 		// sets the turn to 1 after opening phase
 		turn = 0;
-
 		// Player 1 starts
 		player1 = true;
 		player2 = false;
 		player3 = false;
 		player4 = false;
 		player5 = false;
-
 		// Create list of players 1-5 - can have upto 5 players
 		turnOrder = new List<bool> ();
 		turnOrder.Add (player1);
@@ -43,8 +48,7 @@ public class PlayerTurn : MonoBehaviour {
 		turnOrder.Add (player3);
 		turnOrder.Add (player4);
 		turnOrder.Add (player5);
-
-		// multi-dim arrary of colours (r,g,b,a) a is always 1
+		// multi-dim arrary of colours (r,g,b) a is always 1
 		playerColourList = new float[][] {
 			new float[] {0,1,0}, //green
 			new float[] {0,0,1}, //blue
@@ -73,15 +77,30 @@ public class PlayerTurn : MonoBehaviour {
 				// changes from last player to player 1
 				turnOrder [0] = true;
 				// updates turn number
-				turn += 1;
+				if (!phases.openingPhase)
+					turn += 1;
 			}
 		}
-		// reset players ability to move troops during movement phase
-		armyMovement.movementDone = false;
 		// calculate bonus from continent bonus
 		continentBonus.UpdateContBonus ();
 		// give player bonus soldiers
 		deploySoldiers.BonusStore ();
+		// activate AI players
+		if (phases.openingPhase)
+			starterPhase.AIDeployTroop ();
+		else if (CurrentPlayer () != 1)
+			setupPhase.AIPlaceTroops ();
+
+
+		// active AI player if required
+		//aiController.CheckPlayer();
+
+		//test
+		TurnNumber();
+	}
+
+	public void TurnNumber(){
+		TurnNumberText.text = turn.ToString();
 	}
 		
 	// Returns the current player number

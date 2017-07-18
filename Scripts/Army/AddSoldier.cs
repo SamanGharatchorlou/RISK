@@ -5,11 +5,11 @@ using UnityEngine;
 public class AddSoldier : MonoBehaviour {
 
 	PlayerTurn playerTurn;
-
 	CountryManagement countryManagement;
 	SoldierManagement soldierManagement;
 	TroopCount troopCount;
 	TeamChecker teamChecker;
+	Phases phases;
 
 	GameObject scriptHolder, territories;
 	GameObject placer, clone;
@@ -28,6 +28,7 @@ public class AddSoldier : MonoBehaviour {
 		countryManagement = scriptHolder.GetComponent<CountryManagement> ();
 		soldierManagement = scriptHolder.GetComponent<SoldierManagement> ();
 		playerTurn = scriptHolder.GetComponent<PlayerTurn> ();
+		phases = scriptHolder.GetComponent<Phases> ();
 
 		territories = GameObject.FindGameObjectWithTag ("Territories");
 		troopCount = territories.GetComponent<TroopCount> ();
@@ -104,6 +105,8 @@ public class AddSoldier : MonoBehaviour {
 		// Instantiates a soldier at the stored placer location
 		clone = Instantiate (Resources.Load("Soldier"), soldierPosition, Quaternion.identity) as GameObject;
 		clone.transform.parent = this.transform;
+		if (phases.setupPhase)
+			clone.gameObject.tag = "DeployedSoldier";
 		// requires player index as unput, hence the -1
 		soldierManagement.SetSoldierColour(clone, playerTurn.CurrentPlayer()-1);
 		// update game stats

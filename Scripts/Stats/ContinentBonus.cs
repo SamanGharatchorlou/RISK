@@ -7,7 +7,7 @@ public class ContinentBonus : MonoBehaviour {
 	// bonues given by each continent
 	Dictionary<string,int> continentBonuses = new Dictionary<string,int> ();
 	// bonus soldiers reveiced from continent bonuses
-	public Dictionary<string,int> playerContBonus = new Dictionary<string,int> ();
+	public Dictionary<string,int> playerContBonus;
 
 	TeamChecker teamChecker;
 	SoldierBonus soldierBonus;
@@ -37,6 +37,7 @@ public class ContinentBonus : MonoBehaviour {
 	}
 		
 	public void BuildContBonus(int numberOfPlayers){
+		playerContBonus = new Dictionary<string,int> ();
 		// build initial dictionary
 		numbOfPlayers = numberOfPlayers;
 		for (int i = 1; i <= numbOfPlayers; i++)

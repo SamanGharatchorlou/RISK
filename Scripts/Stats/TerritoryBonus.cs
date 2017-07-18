@@ -5,7 +5,7 @@ using UnityEngine;
 public class TerritoryBonus : MonoBehaviour {
 
 	// bonus soldiers received from territory bonues
-	public Dictionary<string,int> playerTerrBonus = new Dictionary<string,int> ();
+	public Dictionary<string,int> playerTerrBonus;
 
 	TerritoryCount territoryCount;
 	SoldierBonus soldierBonus;
@@ -25,6 +25,7 @@ public class TerritoryBonus : MonoBehaviour {
 
 	// builds a dictionary of soldier bonuses from the number of territories owned
 	public void BuildTerritoryBonus(int numberOfPlayers){
+		playerTerrBonus = new Dictionary<string,int> ();
 		for (int i = 1; i <= numberOfPlayers; i++) {
 			// bonus received
 			playerTerritoryBonus = Mathf.FloorToInt(territoryCount.landCounter ["Player" + i] / 3);

@@ -41,7 +41,7 @@ public class TerritoryRank : MonoBehaviour {
 		TerritoryCounts.Sort();
 		TerritoryCounts.Reverse ();
 
-		// list of players in ranked order
+		// list of player numbers in ranked order
 		TerrCountPlayerRanks = new List<int> ();
 
 		// iterate through the ordered TerritoryCounts

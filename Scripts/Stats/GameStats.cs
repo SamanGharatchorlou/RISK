@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameStats : MonoBehaviour {
 
 	// master dictionary holding all game stats
-	public Dictionary<string, int[]> gameStatistics = new Dictionary<string, int[]>();
+	public Dictionary<string, int[]> gameStatistics;
 
 	TroopCount troopCount;
 	TerritoryCount territoryCount;
@@ -26,10 +26,14 @@ public class GameStats : MonoBehaviour {
 		playerRank = this.GetComponent<PlayerRank> ();
 		boardSetUp = this.GetComponent<BoardSetUp> ();
 	}
+
+	void Start(){
+		gameStatistics = new Dictionary<string, int[]>();
+	}
 		
 	// Set up all the game statistics lists
 	public void SetUpGameStats(int numberOfPlayers){
-		BuildGameStats ();
+		//BuildGameStats ();
 		// set up number of territories list
 		territoryCount.BuildTerritoryBank (numberOfPlayers);
 		// set up number of troops list
@@ -44,12 +48,6 @@ public class GameStats : MonoBehaviour {
 		soldierBonus.UpdateSoldierBonus(numberOfPlayers);
 		// build rank table
 		playerRank.BuildRankTable(boardSetUp.numberOfPlayers);
-	}
-		
-	void BuildGameStats(){
-		// build a dictionary with an array of 3 (# territories, # troops, soldier bonus)
-		for (int i = 1; i <= boardSetUp.numberOfPlayers; i++)
-			gameStatistics.Add ("Player" + i, new int[3]);
 	}
 
 }

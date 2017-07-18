@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-//TODO: game buttons change colour when you need to press them - other ones fade out/change colour?
-
 public class GameInstructions : MonoBehaviour {
 
 	public Text instructionBox;
 
 	ArmyMovement armyMovement;
 	GameObject scriptHolder;
+	TeamChecker teamChecker;
 
 	string fromCountry, toCountry;
 
 	void Awake(){
 		scriptHolder = GameObject.FindGameObjectWithTag ("ScriptHolder");
 		armyMovement = scriptHolder.GetComponent<ArmyMovement> ();
+		teamChecker = scriptHolder.GetComponent<TeamChecker> ();
 	}
 
 	//----------------opening/set up phase----------------
@@ -62,14 +62,15 @@ public class GameInstructions : MonoBehaviour {
 	//----------------movement phase----------------
 
 	// move troops, select from country - Phases.EndBattlePhase
-	public void SelectFromCountry(){
-		instructionBox.text = "You can move 1 collocetion of troops across connected territories.\n" +
-		"Select the territory you'd like to move troops from then select 'Move To'";
+	public void SelectMoveButton(){
+		instructionBox.text = "You can move a set of troops across connected territories.\n" +
+		"Select the 'Move Troops' button then select the country you want to move the troop FROM, followed by " +
+		"the country you want to move the troops TO";
 	}
 
 	// select country to move troops to - ArmyMovement.MoveToBtn
-	public void SelectToCountry(string fromCountry){
-		instructionBox.text = "You are moving troops from " + fromCountry + ".\n" +
+	public void SelectToCountry(GameObject fromCountry){
+		instructionBox.text = "You are moving troops from " + fromCountry.name + ".\n" +
 		"Now select the country you'd like to move the troops to.";
 	}
 
@@ -77,6 +78,10 @@ public class GameInstructions : MonoBehaviour {
 	public void MoveTroopButtons(string fromCountry, string toCountry){
 		if (fromCountry == toCountry)
 			fromCountry = armyMovement.fromCountry.name;
+
+		if(fromCountry == null || toCountry == null)
+			return;
+		
 		instructionBox.text = "Press '+' to transfer a single troop from " + fromCountry + " to " + toCountry +
 		"\nPress '-' to move a single troop back from " + toCountry + " to " + fromCountry +
 		"\nOnce you're done press 'End Turn'.";
@@ -85,13 +90,28 @@ public class GameInstructions : MonoBehaviour {
 	//----------------error messages----------------
 
 	// error message if countries aren't connected
-	public void NotConnect(string fromCountry, string toCountry){
+	public void NotConnected(string fromCountry, string toCountry){
 		instructionBox.text = fromCountry + " and " + toCountry + " aren't connected and/or under your control.\n" +
 		"Try selecting something else.";
 	}
 
+	public void CannotMoveThere(GameObject country){
+		instructionBox.text = "You cant move troops to/from " + country.name + "\ntrying selecting another country that you own";
+	}
+
 	public void NoSelection(string selection){
 		instructionBox.text = "No " + selection + " selected.";
+	}
+
+	public void OneMovementTurn(){
+		instructionBox.text = "You only get one movement turn";
+	}
+
+	public void CannotAttack(GameObject attacker, GameObject defender){
+		if (teamChecker.UnderControl (defender))
+			instructionBox.text = "You cant attack yourself...";
+		else
+			instructionBox.text = attacker.name + " and " + defender.name + " aren't neighbours";
 	}
 
 

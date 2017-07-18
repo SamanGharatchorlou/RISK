@@ -17,43 +17,36 @@ public class AllocateSoldiers : MonoBehaviour {
 	PlayerTurn playerTurn;
 	TeamChecker teamChecker;
 	Phases phases;
-	DeploySoldiers deploySoldiers;
-	ChangeCatagory changeCategory;
 	OpeningDeployment openingDeployment;
-	DisplayTurn displayTurn;
-	GameInstructions gameInstructions;
 	BoardSetUp boardSetUp;
 
 	GameObject territories, GUI;
 
 	public bool openingPhase;
+	bool soldiersDeployed;
 
 	int startingArmies, playerArmies;
-	int currentPlayer;
+	int currentPlayer, soldiersLeft;
 
 	// Use this for initialization
 	void Awake () {
 		territories = GameObject.FindGameObjectWithTag ("Territories");
 		troopCount = territories.GetComponent<TroopCount> ();
-		changeCategory = territories.GetComponent<ChangeCatagory> ();
 		boardSetUp = territories.GetComponent<BoardSetUp> ();
 
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		openingDeployment = GUI.GetComponent<OpeningDeployment> ();
-		displayTurn = GUI.GetComponent<DisplayTurn> ();
-		gameInstructions = GUI.GetComponent<GameInstructions> ();
 
 		countryManagement = this.GetComponent<CountryManagement> ();
 		playerTurn = this.GetComponent<PlayerTurn> ();
 		teamChecker = this.GetComponent<TeamChecker> ();
 		phases = this.GetComponent<Phases> ();
-		deploySoldiers = this.GetComponent<DeploySoldiers> ();
 	}
 
 	// Build a soldier bank holding the number of soldiers each player has left to deploy - BoardSetUp
 	public void BuildSoldierBank(int numberOfPlayers){
 		// the number of starting armies each player receives - should be 50 - ....
-		startingArmies = 30 - (5 * numberOfPlayers);
+		startingArmies = 31 - (5 * numberOfPlayers);
 		// build list of giving the number of starting armies each player gets after land has been allocated
 		for (int i = 1; i <= numberOfPlayers; i++) {
 			playerArmies = startingArmies - troopCount.troopCounter ["Player" + i];
@@ -61,11 +54,11 @@ public class AllocateSoldiers : MonoBehaviour {
 		}
 	}
 
-	// places a single soldier on mouse click and changes player turn - setup phase only
+	// places a single soldier on mouse click and changes player turn - opening phase only
 	public void DropSoldier(GameObject country){
 		currentPlayer = playerTurn.CurrentPlayer ();
 		// can only drop soldier on owned territory
-		if (teamChecker.GetPlayer (country) == currentPlayer) {
+		if (teamChecker.UnderControl(country)) {
 			// place a soldier on the selected country
 			addSoldier = country.GetComponent<AddSoldier> ();
 			addSoldier.PlaceSoldier ();
@@ -73,12 +66,25 @@ public class AllocateSoldiers : MonoBehaviour {
 			UpdateTroopNumbers (country);
 			openingDeployment.UpdateDeploymentTable (currentPlayer, soldierBank [currentPlayer - 1]);
 
-			// last player places their last troop - end opening phase
-			if (currentPlayer == boardSetUp.numberOfPlayers & soldierBank [currentPlayer - 1] == 0) {
-				EndOpeningPhase ();
-			}
-			// change player
+			// ends opening phase if all soliders have been deployed
+			ShouldOpeningEnd();
 			playerTurn.NextPlayer ();
+		}
+	}
+
+	void ShouldOpeningEnd(){
+		if (soldierBank [currentPlayer - 1] == 0) {
+			soldiersLeft = 0;
+			foreach (int bank in soldierBank)
+				soldiersLeft += bank;
+			// if all soldiers have been deployed
+			if (soldiersLeft == 0) {
+				phases.EndOpeningPhase ();
+				openingDeployment.ResetColour ();
+				// player 1 starts
+				while (!playerTurn.turnOrder [boardSetUp.numberOfPlayers - 1])
+					playerTurn.NextPlayer ();
+			}
 		}
 	}
 
@@ -89,25 +95,5 @@ public class AllocateSoldiers : MonoBehaviour {
 		// update CountryManagement dictionary
 		countryManagement.ChangeArmySize (country,1);
 	}
-
-	void EndOpeningPhase(){
-		// start setup phase
-		phases.openingPhase = false;
-		phases.setupPhase = true;
-
-		// reset rank table at end of phase
-		openingDeployment.ResetRankTable(playerTurn.CurrentPlayer());
-		// set up bonus soldier text for setup phase
-		deploySoldiers.BonusStore();
-		// build the 3 category headers
-		changeCategory.BuildCatHeaders();
-		// display ranking system
-		changeCategory.RotateCatagory ();
-		// display player 1 turn
-		displayTurn.UpdateTurnText(1);
-		// update game instructions
-		gameInstructions.PlaceTroops();
-	}
-
 
 }

@@ -28,7 +28,6 @@ public class TeamChecker : MonoBehaviour {
 	public Color PlayerColour(GameObject country){
 		// returns default colour if there is no country - this only to prevent errors crashing game
 		if (country == null) {
-			print ("------NO COLOUR WAS SELECTED------");
 			colour = GetColour (6);
 			return colour;
 		}
@@ -94,6 +93,23 @@ public class TeamChecker : MonoBehaviour {
 	// returns the player number of the "SelectedCountry"
 	public int GetPlayer(GameObject country) {
 		return ColourToPlayer (PlayerColour (country));
+	}
+
+	// checks if gameobject is under current player control
+	public bool UnderControl(GameObject item){
+		if (playerTurn.CurrentPlayer () == GetPlayer (item))
+			return true;
+		else
+			return false;
+	}
+
+	// checks if gameobject is under current player control
+	public bool UnderControlName(string item){
+		GameObject someItem = GameObject.Find (item);
+		if (playerTurn.CurrentPlayer () == GetPlayer (someItem))
+			return true;
+		else
+			return false;
 	}
 
 }

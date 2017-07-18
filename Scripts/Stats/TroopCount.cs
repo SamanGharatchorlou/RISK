@@ -5,7 +5,7 @@ using UnityEngine;
 public class TroopCount : MonoBehaviour {
 
 	// dictionary holds the number of territories owned by each player
-	public Dictionary<string,int> troopCounter = new Dictionary<string, int> ();
+	public Dictionary<string,int> troopCounter;
 
 	BoardSetUp boardSetUp;
 	TeamChecker teamChecker;
@@ -22,6 +22,7 @@ public class TroopCount : MonoBehaviour {
 
 	// builds a dictionary of the number of troops owned
 	public void BuildTroopBank(int numberOfPlayers) {
+		troopCounter = new Dictionary<string, int> ();
 		//rebuild playerLand bank
 		boardSetUp.PlayerLandBank (numberOfPlayers);
 

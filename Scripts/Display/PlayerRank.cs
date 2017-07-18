@@ -14,17 +14,22 @@ public class PlayerRank : MonoBehaviour {
 	TroopCount troopCount;
 	SoldierBonusRank soldierBonusRank;
 	SoldierBonus soldierBonus;
+	TeamChecker teamChecker;
+	PlayerTurn playerTurn;
 
 	public GameObject rankPlacer;
 	GameObject cell;
+	GameObject scriptHolder;
 
 	Text textBox, cellText, playerHeader, catagory;
+
+	Color teamColour;
 
 	Vector3 cellPos, adjustXPos, adjustYPos;
 
 	public bool terrCountCat, troopCountCat, solBonusCat;
-	int NumbOfPlayers;
-	string playerNumber;
+	int NumbOfPlayers, playerNumber;
+	string player;
 
 	void Awake () {
 		territoryRank = this.GetComponent<TerritoryRank> ();
@@ -33,6 +38,10 @@ public class PlayerRank : MonoBehaviour {
 		troopCount = this.GetComponent<TroopCount> ();
 		soldierBonusRank = this.GetComponent<SoldierBonusRank> ();
 		soldierBonus = this.GetComponent<SoldierBonus> ();
+
+		scriptHolder = GameObject.FindGameObjectWithTag ("ScriptHolder");
+		teamChecker = scriptHolder.GetComponent<TeamChecker> ();
+		playerTurn = scriptHolder.GetComponent<PlayerTurn> ();
 	}
 
 	// build the player stats table (incl headers)
@@ -74,6 +83,7 @@ public class PlayerRank : MonoBehaviour {
 		return cellText;
 	}
 
+	// displays the category chosen by the player
 	public void DisplayCategory(string catagory){
 		// runs the relevant code
 		if (catagory == "Troop Count")
@@ -84,27 +94,27 @@ public class PlayerRank : MonoBehaviour {
 			RankedSoldierBonus ();
 	}
 
-	// rank by troop count
-	public void RankedTroopCount(){
-		// build table
-		for (int j = 1; j <= NumbOfPlayers; j++) {
-			playerNumber = "Player" + troopRank.TroopCountPlayerRanks [j - 1];
-			// set player number
-			rankTable [j] [0].text = playerNumber;
-			// set value
-			rankTable [j] [1].text = troopCount.troopCounter [playerNumber].ToString ();
-		}
-	}
-
 	// rank by territroy count
 	public void RankedTerrCount(){
 		// build table
 		for (int i = 1; i <= NumbOfPlayers; i++) {
-			playerNumber = "Player" + territoryRank.TerrCountPlayerRanks [i - 1];
-			// set player number
-			rankTable [i] [0].text = playerNumber;
-			// set value
-			rankTable [i] [1].text = territoryCount.landCounter [playerNumber].ToString();
+			playerNumber = territoryRank.TerrCountPlayerRanks [i - 1];
+			player = "Player" + playerNumber;
+			// set player number, values and colours
+			rankTable [i] [1].text = territoryCount.landCounter [player].ToString();
+			RankedTableProperties (i);
+		}
+	}
+
+	// rank by troop count
+	public void RankedTroopCount(){
+		// build table
+		for (int j = 1; j <= NumbOfPlayers; j++) {
+			playerNumber = troopRank.TroopCountPlayerRanks [j - 1];
+			player = "Player" + playerNumber;
+			// set player number, value and colour
+			rankTable [j] [1].text = troopCount.troopCounter [player].ToString ();
+			RankedTableProperties (j);
 		}
 	}
 		
@@ -112,12 +122,24 @@ public class PlayerRank : MonoBehaviour {
 	public void RankedSoldierBonus(){
 		// build table
 		for (int k = 1; k <= NumbOfPlayers; k++) {
-			playerNumber = "Player" + soldierBonusRank.SolBonusPlayerRanks [k - 1];
-			// set player number
-			rankTable [k] [0].text = playerNumber;
-			// set value
-			rankTable [k] [1].text = soldierBonus.soldierIncome [playerNumber].ToString ();
+			playerNumber = soldierBonusRank.SolBonusPlayerRanks [k - 1];
+			player = "Player" + playerNumber;
+			// set player number, values and colours
+			rankTable [k] [1].text = soldierBonus.soldierIncome [player].ToString ();
+			RankedTableProperties (k);
 		}
+	}
+
+	// build various common table properies in function
+	void RankedTableProperties(int index){
+		// rank player number
+		rankTable [index] [0].text = player;
+		// set rank colour
+		teamColour = teamChecker.GetColour (playerNumber);
+		if (playerTurn.CurrentPlayer () != playerNumber)
+			teamColour.a = 0.4f;
+		rankTable [index] [0].color = teamColour;
+		rankTable [index] [1].color = teamColour;
 	}
 
 }

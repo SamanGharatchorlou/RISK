@@ -5,7 +5,7 @@ using UnityEngine;
 public class TerritoryCount : MonoBehaviour {
 
 	// dictionary holds the number of territories owned by each player
-	public Dictionary<string,int> landCounter = new Dictionary<string, int> ();
+	public Dictionary<string,int> landCounter;
 
 	Attack attack;
 	BoardSetUp boardSetUp;
@@ -28,13 +28,12 @@ public class TerritoryCount : MonoBehaviour {
 
 	// builds a dictionary of the number of territories owned
 	public void BuildTerritoryBank(int numberOfPlayers) {
+		landCounter = new Dictionary<string, int> ();
 		numbOfPlayers = numberOfPlayers;
 		// re runs PlayerLandBank code as previous table is modified by BoardSetUp.RandomPlayer()
 		boardSetUp.PlayerLandBank (numbOfPlayers);
-		for (int i = 0; i < numbOfPlayers; i++) {
-			//landCounter ["Player" + (boardSetUp.landBank [i] [0] + 1)] = boardSetUp.landBank [i] [1];
+		for (int i = 0; i < numbOfPlayers; i++)
 			landCounter.Add ("Player" + (boardSetUp.landBank [i] [0] + 1), boardSetUp.landBank [i] [1]);
-		}
 		// build rank system
 		territoryRank.ByTerrCount (numbOfPlayers);
 	}

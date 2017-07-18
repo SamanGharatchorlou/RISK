@@ -15,6 +15,7 @@ public class ArmyManagement : MonoBehaviour {
 	DeploySoldiers deploySoldiers;
 	ReceiveBonus receiveBonus;
 	Attack attack;
+	ButtonColour buttonColour;
 
 	GameObject country, soldierToDelete;
 	GameObject GUI, territories;
@@ -31,11 +32,13 @@ public class ArmyManagement : MonoBehaviour {
 		deploySoldiers = this.GetComponent<DeploySoldiers> ();
 		attack = this.GetComponent<Attack> ();
 
+
 		territories = GameObject.FindGameObjectWithTag ("Territories");
 		troopCount = territories.GetComponent<TroopCount> ();
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		displayEditor = GUI.GetComponent<DisplayEditor> ();
 		receiveBonus = GUI.GetComponent<ReceiveBonus> ();
+		buttonColour = GUI.GetComponent<ButtonColour> ();
 	}
 		
 	// Add a soldier to the selected country (----- + button -----)
@@ -43,15 +46,15 @@ public class ArmyManagement : MonoBehaviour {
 		// only run code during setup phase
 		if (phases.setupPhase) {
 			country = GameObject.FindGameObjectWithTag ("SelectedCountry");
-
-			if (playerTurn.CurrentPlayer () == teamChecker.GetPlayer (country) & deploySoldiers.AddSoldier()) {
+			if (teamChecker.UnderControl (country) & deploySoldiers.CanAddSoldier()) {
 				addSoldier = country.GetComponent<AddSoldier> ();
 				addSoldier.PlaceSoldier ();
-				// only changes count if a soldier was added
-				deploySoldiers.movingSoldierCount -= 1;
-				receiveBonus.SoldierBonusDisplay(deploySoldiers.movingSoldierCount);
+				// changes count if a soldier was added
+				deploySoldiers.soldiersLeft -= 1;
+				receiveBonus.SoldierBonusDisplay(deploySoldiers.soldiersLeft);
 				UpdateTroopNumbers (country, 1);
 			}
+			buttonColour.SetupPlusMinusColour ();
 		}
 	}
 
@@ -62,9 +65,8 @@ public class ArmyManagement : MonoBehaviour {
 			country = GameObject.FindGameObjectWithTag ("SelectedCountry");
 			// Creates a list of the country's soldiers
 			soldiers = new List<GameObject> ();
-			// is the selected country owned by the current player
-			// can the player remove troops (i.e. cannot go below original value)
-			if (playerTurn.CurrentPlayer () == teamChecker.GetPlayer (country) & deploySoldiers.RemoveSoldier()) {
+
+			if (teamChecker.UnderControl (country) & deploySoldiers.CanRemoveSoldier()) {
 				foreach (Transform child in country.transform) {
 					if (child.name == "Soldier(Clone)")
 						soldiers.Add (child.gameObject);
@@ -72,14 +74,17 @@ public class ArmyManagement : MonoBehaviour {
 				// Find and delete the last soldier in the list
 				if (soldiers.Count > 1) {
 					soldierToDelete = soldiers [soldiers.Count - 1];
-					Destroy (soldierToDelete);
-					// only changes count if a soldier was removed
-					deploySoldiers.movingSoldierCount += 1;
-					receiveBonus.SoldierBonusDisplay (deploySoldiers.movingSoldierCount);
-					UpdateTroopNumbers (country, -1);
-					troopCount.UpdateTroopBankV2 (playerTurn.CurrentPlayer (), -1);
+					if (soldierToDelete.tag == "DeployedSoldier") {
+						DestroyImmediate (soldierToDelete);
+						// only changes count if a soldier was removed
+						deploySoldiers.soldiersLeft += 1;
+						receiveBonus.SoldierBonusDisplay (deploySoldiers.soldiersLeft);
+						UpdateTroopNumbers (country, -1);
+						troopCount.UpdateTroopBankV2 (playerTurn.CurrentPlayer (), -1);
+					}
 				}
 			}
+			buttonColour.SetupPlusMinusColour ();
 		}
 	}
 
@@ -89,9 +94,8 @@ public class ArmyManagement : MonoBehaviour {
 		country = GameObject.FindGameObjectWithTag(countryTag);
 		soldiers = new List<GameObject>();
 		foreach (Transform child in country.transform) {
-			if (child.name == "Soldier(Clone)") {
+			if (child.name == "Soldier(Clone)")
 				soldiers.Add (child.gameObject);
-			}
 		}
 		// Find and delete the last soldier in the list
 		for (int i = 1; i <= numberDead; i++) {
@@ -105,7 +109,6 @@ public class ArmyManagement : MonoBehaviour {
 		else if (countryTag == "DefendingCountry")
 			rmDeadPlayerNum = attack.defendingPlayer;
 		
-	
 		UpdateTroopNumbers (country, -numberDead);
 		troopCount.UpdateTroopBankV2 (rmDeadPlayerNum, -numberDead);
 	}
@@ -120,5 +123,4 @@ public class ArmyManagement : MonoBehaviour {
 			displayEditor.SelectedTerritory (country);
 	}
 		
-
 }

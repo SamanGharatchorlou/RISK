@@ -24,6 +24,7 @@ public class DisplayEditor : MonoBehaviour {
 		scriptHolder = GameObject.FindGameObjectWithTag ("ScriptHolder");
 		countryManagement = scriptHolder.GetComponent<CountryManagement> ();
 		teamChecker = scriptHolder.GetComponent<TeamChecker> ();
+
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		gameInstructions = GUI.GetComponent<GameInstructions> ();
 	}
@@ -36,16 +37,18 @@ public class DisplayEditor : MonoBehaviour {
 	// Display selected country stats
 	public void SelectedTerritory(GameObject country){
 		selectedCountryText.text = country.name + "(" + countryManagement.GetArmySize (country.name) + ")";
-		selectedCountryText.color = teamChecker.PlayerColour (country);
+		SetColour (selectedCountryText, country);
 		RemoveBattleText ();
 	}
 
 	// Display "attacker -->"
 	public void AttackingTerritory(GameObject attacker){
+		// set attack text
 		selectedCountryText.text = attacker.name + "(" + countryManagement.GetArmySize (attacker.name) + ") is attacking... ";
-		selectedCountryText.color = teamChecker.PlayerColour (attacker);
+		SetColour (selectedCountryText, attacker);
+		// remove defender text
+		RemoveBattleText();
 		gameInstructions.SelectDefCountry (attacker.name);
-
 	}
 
 	// Display "attacker --> defender"
@@ -54,15 +57,26 @@ public class DisplayEditor : MonoBehaviour {
 			return;
 		// set attacker text
 		selectedCountryText.text = attacker.name + "(" + countryManagement.GetArmySize (attacker.name) + ") is attacking ";
-		selectedCountryText.color = teamChecker.PlayerColour (attacker);
+		SetColour (selectedCountryText, attacker);
 		// set defender text
 		defendingCountryText.text = defender.name + "(" + countryManagement.GetArmySize (defender.name) + ")";
-		defendingCountryText.color = teamChecker.PlayerColour (defender);
+		SetColour (defendingCountryText, defender);
 
 		BattleTxtPos ();
 		gameInstructions.PressBattle ();
 	}
 
+	public void CannotAttack(GameObject attacker, GameObject defender){
+		// attacker cant attack...
+		selectedCountryText.text = attacker.name + " cannot attack ";
+		SetColour (selectedCountryText, attacker);
+		// defender
+		defendingCountryText.text = defender.name;
+		SetColour (defendingCountryText, defender);
+
+		BattleTxtPos ();
+	}
+		
 	// removes defender text when not valid anymore
 	public void RemoveBattleText(){
 		defendingCountryText.text = "";
@@ -83,5 +97,12 @@ public class DisplayEditor : MonoBehaviour {
 		defendingCountryText.transform.SetPositionAndRotation (atkTextPos + defTextAdjust,Quaternion.identity);
 	}
 		
-		
+	// set colour of text
+	void SetColour(Text textBox, GameObject country){
+		// hacked together
+		// TODO: gives error when run by AI players
+		textBox.color = teamChecker.PlayerColour (country);
+	}
+
+	//TODO: add movement phase display
 }

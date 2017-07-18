@@ -22,7 +22,7 @@ public class TargetingNetwork : MonoBehaviour {
 			new string[]{ "Central America", "Eastern United States", "Western United States", "Venezuela" },
 			new string[]{ "Eastern United States", "Central America", "Western United States", "Ontario", "Quebec" },
 			new string[]{ "Greenland", "North West Territory", "Ontario", "Quebec", "Iceland" },
-			new string[]{ "North West Territory", "Alberta", "Greenland", "Ontario" },
+			new string[]{ "North West Territory", "Alaska", "Alberta", "Greenland", "Ontario" },
 			new string[]{ "Ontario","Alberta","Eastern United States","Greenland","North West Territory","Quebec","Western United States"},
 			new string[]{ "Quebec", "Greenland", "Ontario", "Eastern United States" },
 			new string[]{ "Western United States", "Alberta", "Central America", "Eastern United States", "Ontario" },
@@ -46,8 +46,8 @@ public class TargetingNetwork : MonoBehaviour {
 			new string[] { "Iceland", "Great Britain", "Scandinavia", "Greenland" },
 			new string[] { "Northern Europe", "Great Britain", "Scandinavia", "Southern Europe", "Ukraine", "Western Europe" },
 			new string[] { "Scandinavia", "Great Britain", "Iceland", "Northern Europe", "Ukraine" },
-			new string[] { "Southern Europe", "Northern Europe", "Ukraine", "Western Europe", "Egypt", "North Africa", "Middle east"},
-			new string[] { "Ukraine", "Northern Europe", "Scandinavia", "Southern Europe", "Afghanistan", "Middle east", "Ural" },
+			new string[] { "Southern Europe", "Northern Europe", "Ukraine", "Western Europe", "Egypt", "North Africa", "Middle East"},
+			new string[] { "Ukraine", "Northern Europe", "Scandinavia", "Southern Europe", "Afghanistan", "Middle East", "Ural" },
 			new string[] { "Western Europe", "Great Britain", "Northern Europe", "Southern Europe", "North Africa" },
 
 			//Asia (12)
@@ -73,7 +73,7 @@ public class TargetingNetwork : MonoBehaviour {
 		};  
 	}
 
-	// returns true is the countries are neighbours
+	// returns true if the countries are neighbours
 	public bool isNeighbour(string attacker, string defender){
 		foreach (string[] subNetwork in network) {
 			if (subNetwork [0] == attacker) {
@@ -84,6 +84,17 @@ public class TargetingNetwork : MonoBehaviour {
 			}
 		}
 		return false;
+	}
+
+	// returns a given country's neighbours
+	public string[] Neighbours(string someCountry){
+		foreach(string[] subNetwork in network){
+			if (someCountry == subNetwork [0])
+				return subNetwork;
+		}
+		// TODO: make this some dummy array or null array. In any case code should never get here
+		print("Neighbours Function in tarketing network ERROR!");
+		return network[0];
 	}
 
 }
