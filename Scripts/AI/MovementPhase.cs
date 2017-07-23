@@ -21,7 +21,8 @@ public class MovementPhase : MonoBehaviour {
 	GameObject toCountry, fromCountry, frontlineCountry;
 
 	string fromCountryName, toCountryName ;
-	int movementDelay, inlandArmySize, inlandCountryMax, fromCountrySize;
+	int inlandArmySize, inlandCountryMax, fromCountrySize;
+	float movementDelay;
 
 	void Awake () {
 		armyMovement = this.GetComponent<ArmyMovement> ();
@@ -33,7 +34,7 @@ public class MovementPhase : MonoBehaviour {
 
 	// Calls the MoveTroops method if required - called in AIController
 	public void AIMoveSoldiers(){
-		movementDelay = 1;
+		movementDelay = globalFunctions.timeDelay;
 		// selects fromCountry and toCountry
 		InlandToFrontline();
 		// moves troops

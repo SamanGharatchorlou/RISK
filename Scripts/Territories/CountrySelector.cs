@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// TODO: think about adding a 3D selection arrow signalling who they have just selected?
-
 public class CountrySelector : MonoBehaviour {
 
 	DisplayEditor displayEditor;
@@ -13,6 +11,7 @@ public class CountrySelector : MonoBehaviour {
 	GameInstructions gameInstructions;
 	ButtonColour buttonColour;
 	ArmyMovement armyMovement;
+	PlayerTurn playerTurn;
 
 	public GameObject country;
 	GameObject scriptHolder, GUI;
@@ -25,6 +24,7 @@ public class CountrySelector : MonoBehaviour {
 		targetCountry = scriptHolder.GetComponent<TargetCountry> ();
 		phases = scriptHolder.GetComponent<Phases> ();
 		armyMovement = scriptHolder.GetComponent<ArmyMovement> ();
+		playerTurn = scriptHolder.GetComponent<PlayerTurn> ();
 
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		displayEditor = GUI.GetComponent<DisplayEditor> ();
@@ -34,6 +34,11 @@ public class CountrySelector : MonoBehaviour {
 
 	//Remove presvious country selected and add tag to new country selection
 	void OnMouseDown(){
+		
+		//TODO: adjust this to take human players into account
+		// cannot select countries during AI turn
+		if (playerTurn.CurrentPlayer () != 1)
+			return;
 		
 		// removes tag from previously selected country
 		previousCountry = GameObject.FindGameObjectWithTag ("SelectedCountry");
@@ -61,11 +66,15 @@ public class CountrySelector : MonoBehaviour {
 			targetCountry.SetDefender ();
 			return;
 		}
-			
+
+		// doesnt display selected territory during movement phase (other display is show)
+		if (armyMovement.movementSelected)
+			return;
+		
 		// place soldiers during the opening phase script
 		if (phases.openingPhase)
 			allocateSoldiers.DropSoldier (country);
-			
+
 		// Runs display selected country, doesnt run when selecting attacker or defender
 		displayEditor.SelectedTerritory (country);
 	}

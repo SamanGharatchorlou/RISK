@@ -86,14 +86,12 @@ public class TargetingNetwork : MonoBehaviour {
 		return false;
 	}
 
-	// returns a given country's neighbours
+	// returns a given country's neighbours (incl. itself at index 0
 	public string[] Neighbours(string someCountry){
 		foreach(string[] subNetwork in network){
 			if (someCountry == subNetwork [0])
 				return subNetwork;
 		}
-		// TODO: make this some dummy array or null array. In any case code should never get here
-		print("Neighbours Function in tarketing network ERROR!");
 		return network[0];
 	}
 

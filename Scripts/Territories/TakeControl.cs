@@ -62,16 +62,6 @@ public class TakeControl : MonoBehaviour {
 		buttonColour.BattleBattleColour(attackingCountry,defendingCountry);
 		buttonColour.BattleAttackColour (false);
 		buttonColour.BattlePlusMinusColour (false);
-
-		// update continent bonus dictionary - call wait time function
-		//StartCoroutine(ExecuteAfterTime(0.1f));
-	}
-
-	// this script has been created because UpdateContBonus doesnt work properly without the delayed call
-	IEnumerator ExecuteAfterTime(float time)
-	{
-		yield return new WaitForSeconds(time);
-		continentBonus.UpdateContBonus ();
 	}
 
 }

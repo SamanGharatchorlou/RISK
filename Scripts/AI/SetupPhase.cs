@@ -21,7 +21,8 @@ public class SetupPhase : MonoBehaviour {
 	GameObject randomCountry, selectedCountry;
 
 	string randomCountryName;
-	int randomCountryIndex, placementDelay;
+	int randomCountryIndex;
+	float placementDelay;
 
 	void Awake () {
 		deploySolders = this.GetComponent<DeploySoldiers> ();
@@ -33,7 +34,7 @@ public class SetupPhase : MonoBehaviour {
 
 	//place troops on a chosen country - to be called by AI controller
 	public void AIPlaceTroops(){
-		placementDelay = 1;
+		placementDelay = globalFunctions.timeDelay;
 		// select a single front line country
 		SelectFrontLineCountry();
 		// place all soldiers onto 1 frontline country

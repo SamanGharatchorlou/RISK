@@ -14,10 +14,21 @@ public class GlobalFunctions : MonoBehaviour {
 	CountryManagement countryManagement;
 	TargetingNetwork targetingNetwork;
 
+	public float timeDelay;
+
 	void Awake(){
 		teamChecker = this.GetComponent<TeamChecker> ();
 		countryManagement = this.GetComponent<CountryManagement> ();
 		targetingNetwork = this.GetComponent<TargetingNetwork> ();
+	}
+
+	void Start(){
+		// default time delay is 1s
+		timeDelay = 1;
+	}
+
+	public void ChangeDelay(float newDelayTime){
+		timeDelay = newDelayTime;
 	}
 
 	// builds a list of countries under player control with a soldier count >= a given value
@@ -82,13 +93,5 @@ public class GlobalFunctions : MonoBehaviour {
 		}
 		return sortedList;
 	}
-
-	// waits for a given amount of time
-	public IEnumerator Wait(float time)
-	{
-		yield return new WaitForSeconds(time);
-	}
-
-
 
 }

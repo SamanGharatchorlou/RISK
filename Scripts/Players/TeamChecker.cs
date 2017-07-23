@@ -24,23 +24,9 @@ public class TeamChecker : MonoBehaviour {
 		playerTurn = scriptHolder.GetComponent<PlayerTurn> ();
 	}
 
-	// returns the colour of the "selected country"
-	public Color PlayerColour(GameObject country){
-		// returns default colour if there is no country - this only to prevent errors crashing game
-		if (country == null) {
-			colour = GetColour (6);
-			return colour;
-		}
-		// searches for the first soldier in a country
-		for (int i = 0; i < country.transform.childCount; i++) {
-			childObject = country.transform.GetChild (i);
-			if (childObject.name == "Soldier(Clone)")
-				break;
-		}
-		rend = childObject.GetComponent<Renderer> ();
-		colour = rend.material.color;
-
-		return colour;
+	// returns the player number of the "SelectedCountry"
+	public int GetPlayer(GameObject country) {
+		return ColourToPlayer (PlayerColour (country));
 	}
 
 	// returns the player number of a particular colour
@@ -78,6 +64,25 @@ public class TeamChecker : MonoBehaviour {
 		return playerIndex+1;
 	}
 
+	// returns the colour of the "selected country"
+	public Color PlayerColour(GameObject country){
+		// returns default colour if there is no country - this only to prevent errors crashing game
+		if (country == null) {
+			colour = GetColour (6);
+			return colour;
+		}
+		// searches for the first soldier in a country
+		for (int i = 0; i < country.transform.childCount; i++) {
+			childObject = country.transform.GetChild (i);
+			if (childObject.name == "Soldier(Clone)")
+				break;
+		}
+		rend = childObject.GetComponent<Renderer> ();
+		colour = rend.material.color;
+
+		return colour;
+	}
+		
 	// returns the colour of a player
 	public Color GetColour(int player){
 		indexPlayer = player - 1;
@@ -88,11 +93,6 @@ public class TeamChecker : MonoBehaviour {
 
 		playerColour = new Color (r, g, b, a);
 		return playerColour;
-	}
-
-	// returns the player number of the "SelectedCountry"
-	public int GetPlayer(GameObject country) {
-		return ColourToPlayer (PlayerColour (country));
 	}
 
 	// checks if gameobject is under current player control

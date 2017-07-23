@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class OpeningDeployment : MonoBehaviour {
 
 	public List<Text[]> deploymentTable;
+	public Text categoryButton;
 
 	PlayerRank playerRank;
 	AllocateSoldiers allocateSoldiers;
@@ -29,17 +30,16 @@ public class OpeningDeployment : MonoBehaviour {
 	// build the soldier deployment table for openingPhase
 	public void BuildDeployementTable(int numberOfPlayers){
 		deploymentTable = playerRank.rankTable;
-	
-		// set header
-		deploymentTable[0][1].text="Soldiers Left";
-
+		// default category
+		categoryButton.text = "Soldiers Left";
+		categoryButton.color = Color.black;
+		// display the number of soldiers left to deploy
 		for (int i = 1; i <= numberOfPlayers; i++) {
 			deploymentTable [i] [0].text = "Player" + i;
-			// set player 1 colour rest goes into update
 			soldiersLeft = allocateSoldiers.soldierBank [i - 1].ToString ();
 			deploymentTable [i] [1].text = soldiersLeft;
 		}
-		// set player 1 colour -> green
+		// set player 1 colour
 		deploymentTable [1] [0].color = teamChecker.GetColour (1);
 		deploymentTable [1] [1].color = teamChecker.GetColour (1);
 	}

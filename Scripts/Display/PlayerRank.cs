@@ -21,7 +21,7 @@ public class PlayerRank : MonoBehaviour {
 	GameObject cell;
 	GameObject scriptHolder;
 
-	Text textBox, cellText, playerHeader, catagory;
+	Text textBox, cellText, playerHeader, category;
 
 	Color teamColour;
 
@@ -49,13 +49,14 @@ public class PlayerRank : MonoBehaviour {
 		NumbOfPlayers = numberOfPlayers;
 		rankTable = new List<Text[]> ();
 		// build a 2 x numberOfPlayers table of text boxes (cells)
-		for (int y = 0; y <= NumbOfPlayers; y++)
-			rankTable.Add (new Text[]{ CreateCell(), CreateCell() });
+		for (int y = 0; y <= NumbOfPlayers; y++) {
+			rankTable.Add (new Text[]{ CreateCell (), CreateCell () });
+		}
 
 		// set x and y distances between cells
 		cellPos = rankPlacer.transform.position;
-		adjustXPos = new Vector3 (120, 0, 0);
-		adjustYPos = new Vector3 (0, 20, 0);
+		adjustXPos = new Vector3 (80, 0, 0);
+		adjustYPos = new Vector3 (0, 22, 0);
 
 		// set cell positions
 		for (int i = 0; i < rankTable.Count; i++) {
@@ -71,27 +72,10 @@ public class PlayerRank : MonoBehaviour {
 		}
 		// set headers
 		playerHeader = rankTable[0][0];
-		catagory = rankTable [0] [1];
 		playerHeader.text = "Player";
-		catagory.text = "";
-	}
+		playerHeader.color = Color.black;
 
-	// create a single cell
-	public Text CreateCell(){
-		cell = GameObject.Instantiate (Resources.Load ("Text Box"), rankPlacer.transform) as GameObject;
-		cellText = cell.GetComponent<Text> ();
-		return cellText;
-	}
-
-	// displays the category chosen by the player
-	public void DisplayCategory(string catagory){
-		// runs the relevant code
-		if (catagory == "Troop Count")
-			RankedTroopCount ();
-		else if (catagory == "Territory Count")
-			RankedTerrCount ();
-		else if (catagory == "Soldier Bonus")
-			RankedSoldierBonus ();
+		Destroy (rankTable [0] [1].gameObject);
 	}
 
 	// rank by territroy count
@@ -136,10 +120,23 @@ public class PlayerRank : MonoBehaviour {
 		rankTable [index] [0].text = player;
 		// set rank colour
 		teamColour = teamChecker.GetColour (playerNumber);
+		// reduce visability of other player values
 		if (playerTurn.CurrentPlayer () != playerNumber)
 			teamColour.a = 0.4f;
 		rankTable [index] [0].color = teamColour;
 		rankTable [index] [1].color = teamColour;
 	}
+
+	// create a single cell
+	public Text CreateCell(){
+		cell = GameObject.Instantiate (Resources.Load ("Text Box"), rankPlacer.transform) as GameObject;
+		// set cell dimentions
+		RectTransform cellDimentions = cell.GetComponent<RectTransform> ();
+		cellDimentions.sizeDelta = new Vector2 (50, 20);
+
+		cellText = cell.GetComponent<Text> ();
+		return cellText;
+	}
+
 
 }

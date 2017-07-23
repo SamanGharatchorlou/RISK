@@ -15,6 +15,7 @@ public class Attack : MonoBehaviour {
 	Phases phases;
 	TeamChecker teamChecker;
 	GameInstructions gameInstructions;
+	DisplayEditor displayEditor;
 
 	public GameObject attackingCountry, defendingCountry;
 	GameObject GUI, Territories;
@@ -28,6 +29,7 @@ public class Attack : MonoBehaviour {
 	void Awake(){
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		gameInstructions = GUI.GetComponent<GameInstructions> ();
+		displayEditor = GUI.GetComponent<DisplayEditor> ();
 
 		targetingNetwork = this.GetComponent<TargetingNetwork> ();
 		armyManagement = this.GetComponent<ArmyManagement>();
@@ -52,6 +54,7 @@ public class Attack : MonoBehaviour {
 				if (AttackerArmySize () > 1 & CanAttack(attackingCountry,defendingCountry)) {
 					Battle (AttackerArmySize (), DefenderArmySize ());
 					gameInstructions.BattleOutcome (deadAttackers, deadDefenders);
+					displayEditor.BattleResult (attackingCountry, defendingCountry, deadAttackers, deadDefenders);
 				}
 				// if defender has 0 troops attacker claims the land
 				if (DefenderArmySize () == 0)

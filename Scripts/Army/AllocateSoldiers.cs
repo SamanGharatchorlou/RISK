@@ -19,6 +19,10 @@ public class AllocateSoldiers : MonoBehaviour {
 	Phases phases;
 	OpeningDeployment openingDeployment;
 	BoardSetUp boardSetUp;
+	GlobalFunctions globalFunctions;
+	DisplayEditor displayEditor;
+	ButtonColour buttonColour;
+	ChangeCatagory changeCategory;
 
 	GameObject territories, GUI;
 
@@ -27,52 +31,71 @@ public class AllocateSoldiers : MonoBehaviour {
 
 	int startingArmies, playerArmies;
 	int currentPlayer, soldiersLeft;
+	public int dropCounter;
 
 	// Use this for initialization
 	void Awake () {
 		territories = GameObject.FindGameObjectWithTag ("Territories");
 		troopCount = territories.GetComponent<TroopCount> ();
 		boardSetUp = territories.GetComponent<BoardSetUp> ();
+		changeCategory = territories.GetComponent<ChangeCatagory> ();
 
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		openingDeployment = GUI.GetComponent<OpeningDeployment> ();
+		displayEditor = GUI.GetComponent<DisplayEditor> ();
+		buttonColour = GUI.GetComponent<ButtonColour> ();
 
 		countryManagement = this.GetComponent<CountryManagement> ();
 		playerTurn = this.GetComponent<PlayerTurn> ();
 		teamChecker = this.GetComponent<TeamChecker> ();
 		phases = this.GetComponent<Phases> ();
+		globalFunctions = this.GetComponent<GlobalFunctions> ();
 	}
 
 	// Build a soldier bank holding the number of soldiers each player has left to deploy - BoardSetUp
 	public void BuildSoldierBank(int numberOfPlayers){
 		// the number of starting armies each player receives - should be 50 - ....
-		startingArmies = 31 - (5 * numberOfPlayers);
+		startingArmies = 35 - (5 * numberOfPlayers);
 		// build list of giving the number of starting armies each player gets after land has been allocated
 		for (int i = 1; i <= numberOfPlayers; i++) {
 			playerArmies = startingArmies - troopCount.troopCounter ["Player" + i];
 			soldierBank.Add (playerArmies);
 		}
+		// initialise dropCounter value
+		dropCounter = 1;
 	}
 
 	// places a single soldier on mouse click and changes player turn - opening phase only
 	public void DropSoldier(GameObject country){
 		currentPlayer = playerTurn.CurrentPlayer ();
+		print (dropCounter);
 		// can only drop soldier on owned territory
-		if (teamChecker.UnderControl(country)) {
+		if (teamChecker.UnderControl(country) & dropCounter == playerTurn.turn) {
 			// place a soldier on the selected country
 			addSoldier = country.GetComponent<AddSoldier> ();
 			addSoldier.PlaceSoldier ();
 			// update game stats
-			UpdateTroopNumbers (country);
-			openingDeployment.UpdateDeploymentTable (currentPlayer, soldierBank [currentPlayer - 1]);
-
+			UpdateStats (country);
 			// ends opening phase if all soliders have been deployed
-			ShouldOpeningEnd();
-			playerTurn.NextPlayer ();
+			FinishOpeningPhase();
+			// changes player after time delay
+			StartCoroutine(ExecuteAfterTime(globalFunctions.timeDelay));
 		}
 	}
 
-	void ShouldOpeningEnd(){
+	// waits a time t then changes turn
+	IEnumerator ExecuteAfterTime(float time) {
+		yield return new WaitForSeconds(time);
+		playerTurn.NextPlayer (true);
+		// display ranking system as troop count
+		do
+			changeCategory.RotateCategory ();
+		while(phases.setupPhase & changeCategory.categoryButton.text != "Troop Count");
+	}
+
+	// ends opening phase and changes player turn to the last player - Execute after time (function above) then sets turn to player 1
+	void FinishOpeningPhase(){
+		// sums the remaining number of soldiers
 		if (soldierBank [currentPlayer - 1] == 0) {
 			soldiersLeft = 0;
 			foreach (int bank in soldierBank)
@@ -80,20 +103,26 @@ public class AllocateSoldiers : MonoBehaviour {
 			// if all soldiers have been deployed
 			if (soldiersLeft == 0) {
 				phases.EndOpeningPhase ();
-				openingDeployment.ResetColour ();
-				// player 1 starts
+				// sets it to last players turn
 				while (!playerTurn.turnOrder [boardSetUp.numberOfPlayers - 1])
-					playerTurn.NextPlayer ();
+					playerTurn.NextPlayer (false);
+				// activate category button
+				buttonColour.UnlockButton ("category");
 			}
 		}
 	}
 
 	// update various stats
-	void UpdateTroopNumbers(GameObject country){
-		// update soldierBank
-		soldierBank[playerTurn.CurrentPlayer()-1] -= 1;
+	void UpdateStats(GameObject country){
+		// update deployment table
+		soldierBank[currentPlayer-1] -= 1;
+		openingDeployment.UpdateDeploymentTable (currentPlayer, soldierBank [currentPlayer - 1]);
 		// update CountryManagement dictionary
 		countryManagement.ChangeArmySize (country,1);
+		// update display
+		displayEditor.OpeningPlaceSoldier (country);
+		// prevents player placing multiple units
+		dropCounter = playerTurn.turn + 1;
 	}
 
 }

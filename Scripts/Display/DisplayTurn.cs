@@ -8,6 +8,7 @@ public class DisplayTurn : MonoBehaviour {
 	TeamChecker teamChecker;
 
 	public Text turnText;
+	public Text TurnNumberText;
 
 	GameObject scriptHolder;
 
@@ -16,10 +17,13 @@ public class DisplayTurn : MonoBehaviour {
 		teamChecker = scriptHolder.GetComponent<TeamChecker> ();
 	}
 
-	// displays current players turn
-	public void UpdateTurnText(int turn){
-		turnText.text = "Player " + turn;
-		turnText.color = teamChecker.GetColour (turn);
+	// displays game and player turn numbers
+	public void UpdateTurnText(int playerTurnNumber, int gameTurnNumber){
+		// displays the players turn number
+		turnText.text = "Player " + playerTurnNumber;
+		turnText.color = teamChecker.GetColour (playerTurnNumber);
+		// displays the games turn number
+		TurnNumberText.text = gameTurnNumber.ToString ();
 	}
 
 

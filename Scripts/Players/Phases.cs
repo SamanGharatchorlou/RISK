@@ -20,11 +20,6 @@ public class Phases : MonoBehaviour {
 	OpeningDeployment openingDeployment;
 	ChangeCatagory changeCategory;
 
-	//test
-	AIController aiController;
-	AttackPhase attackPhase;
-	MovementPhase AImovementPhase;
-
 	GameObject GUI, territories;
 
 	public bool startingPhase, openingPhase, setupPhase, battlePhase, movementPhase;
@@ -45,10 +40,6 @@ public class Phases : MonoBehaviour {
 		playerTurn = this.GetComponent<PlayerTurn> ();
 		deploySoldiers = this.GetComponent<DeploySoldiers> ();
 		armyMovement = this.GetComponent<ArmyMovement> ();
-
-		aiController = this.GetComponent<AIController> ();
-		attackPhase = this.GetComponent<AttackPhase> ();
-		AImovementPhase = this.GetComponent<MovementPhase> ();
 	}
 
 	void Start () {
@@ -64,18 +55,14 @@ public class Phases : MonoBehaviour {
 		// start setup phase
 		openingPhase = false;
 		setupPhase = true;
-		// remove 'soldiers left' text
-		openingDeployment.deploymentTable [0] [1].text = "";
 		// set up bonus soldier text for setup phase
 		deploySoldiers.BonusStore();
-		// build the 3 category headers
-		changeCategory.BuildCatHeaders();
-		// display ranking system
-		changeCategory.RotateCatagory ();
-		// display player 1 turn
-		displayTurn.UpdateTurnText(1);
 		// update game instructions
 		gameInstructions.PlaceTroops();
+		//resets row colours of rank table
+		openingDeployment.ResetColour();
+		// reset player turn
+		playerTurn.turn = 0;
 	}
 
 	
@@ -134,7 +121,7 @@ public class Phases : MonoBehaviour {
 			movementPhase = false;
 			setupPhase = true;
 			//end player turn
-			playerTurn.NextPlayer ();
+			playerTurn.NextPlayer (true);
 			// skips defeated players turn
 			if (territoryCount.landCounter ["Player" + playerTurn.CurrentPlayer ()] == 0) {
 				// ends game if required
@@ -148,14 +135,10 @@ public class Phases : MonoBehaviour {
 			phaseButton.EndSetupText ();
 			// displays soldier bonus display
 			receiveBonus.SoldierBonusDisplay (deploySoldiers.soldiersLeft);
-			// changes player turn display
-			displayTurn.UpdateTurnText (playerTurn.CurrentPlayer ());
 			// resets button colours
 			buttonColour.DeactiveateAll();
 			// reset movement phase variables
 			armyMovement.ResetMoveVariables();
-			// activates the next AI players turn
-			aiController.CheckPlayer ();
 		}
 	}
 

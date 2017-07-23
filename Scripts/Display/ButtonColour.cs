@@ -11,7 +11,7 @@ public class ButtonColour : MonoBehaviour {
 	Attack attack;
 	DeploySoldiers deploySoldiers;
 
-	public Button plusBtn, minusBtn, attackBtn, battleBtn, moveBtn, turnBtn, catergoryBtn;
+	public Button plusBtn, minusBtn, attackBtn, battleBtn, moveBtn, turnBtn, catergoryBtn, startBtn;
 
 	Image plusColour, minusColour,attackColour, battleColour, turnColour, moveColour, categoryColour;
 
@@ -68,6 +68,27 @@ public class ButtonColour : MonoBehaviour {
 	// set default colours to perma active buttons
 	public void PermaActive(){
 		categoryColour.color = permaActiveGrey;
+	}
+
+	// lock button
+	public void LockButton(string button){
+		switch (button) {
+		case "category":
+			catergoryBtn.interactable = false;
+			break;
+		case "start":
+			startBtn.interactable = false;
+			break;
+		}
+	}
+
+	// unlock button
+	public void UnlockButton(string button){
+		switch (button) {
+		case "category":
+			catergoryBtn.interactable = true;
+			break;
+		}
 	}
 		
 	// ------------------------- SETUP PHASE  -------------------------

@@ -32,35 +32,30 @@ public class ArmyManagement : MonoBehaviour {
 		deploySoldiers = this.GetComponent<DeploySoldiers> ();
 		attack = this.GetComponent<Attack> ();
 
-
 		territories = GameObject.FindGameObjectWithTag ("Territories");
 		troopCount = territories.GetComponent<TroopCount> ();
+
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		displayEditor = GUI.GetComponent<DisplayEditor> ();
 		receiveBonus = GUI.GetComponent<ReceiveBonus> ();
 		buttonColour = GUI.GetComponent<ButtonColour> ();
 	}
 		
-	// Add a soldier to the selected country (----- + button -----)
+	// Add a soldier to the selected country - setup phase only
 	public void Add(){
-		// only run code during setup phase
 		if (phases.setupPhase) {
 			country = GameObject.FindGameObjectWithTag ("SelectedCountry");
 			if (teamChecker.UnderControl (country) & deploySoldiers.CanAddSoldier()) {
 				addSoldier = country.GetComponent<AddSoldier> ();
 				addSoldier.PlaceSoldier ();
-				// changes count if a soldier was added
-				deploySoldiers.soldiersLeft -= 1;
-				receiveBonus.SoldierBonusDisplay(deploySoldiers.soldiersLeft);
-				UpdateTroopNumbers (country, 1);
+				UpdateNumbers(country,1);
 			}
 			buttonColour.SetupPlusMinusColour ();
 		}
 	}
 
-	// Remove a soldier from the selected country (----- - button -----)
-	public void Remove(){		
-		// only run code during setup phase
+	// Remove a soldier from the selected country - setup phase only
+	public void Remove(){
 		if (phases.setupPhase) {
 			country = GameObject.FindGameObjectWithTag ("SelectedCountry");
 			// Creates a list of the country's soldiers
@@ -76,10 +71,7 @@ public class ArmyManagement : MonoBehaviour {
 					soldierToDelete = soldiers [soldiers.Count - 1];
 					if (soldierToDelete.tag == "DeployedSoldier") {
 						DestroyImmediate (soldierToDelete);
-						// only changes count if a soldier was removed
-						deploySoldiers.soldiersLeft += 1;
-						receiveBonus.SoldierBonusDisplay (deploySoldiers.soldiersLeft);
-						UpdateTroopNumbers (country, -1);
+						UpdateNumbers (country, -1);
 						troopCount.UpdateTroopBankV2 (playerTurn.CurrentPlayer (), -1);
 					}
 				}
@@ -109,18 +101,19 @@ public class ArmyManagement : MonoBehaviour {
 		else if (countryTag == "DefendingCountry")
 			rmDeadPlayerNum = attack.defendingPlayer;
 		
-		UpdateTroopNumbers (country, -numberDead);
+		//UpdateTroopNumbers (country, -numberDead);
+		countryManagement.ChangeArmySize (country, -numberDead);
 		troopCount.UpdateTroopBankV2 (rmDeadPlayerNum, -numberDead);
 	}
 
-	// Update CountryManagement army numbers
-	public void UpdateTroopNumbers(GameObject country, int ChangeArmyBy){
-		// Update CountryManagement dictionary
+	// Update various stats
+	public void UpdateNumbers(GameObject country, int ChangeArmyBy){
+		// update numbers
+		deploySoldiers.soldiersLeft = deploySoldiers.soldiersLeft - ChangeArmyBy;
+		receiveBonus.SoldierBonusDisplay(deploySoldiers.soldiersLeft);
 		countryManagement.ChangeArmySize (country, ChangeArmyBy);
-
-		// Runs display selected country
-		if(country != null)
-			displayEditor.SelectedTerritory (country);
+		// display number of soldiers added during turn
+		displayEditor.SetupDeploySoldier (country);
 	}
 		
 }

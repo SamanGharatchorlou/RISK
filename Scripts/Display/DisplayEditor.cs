@@ -8,22 +8,29 @@ public class DisplayEditor : MonoBehaviour {
 	CountryManagement countryManagement;
 	TeamChecker teamChecker;
 	GameInstructions gameInstructions;
+	PlayerTurn playerTurn;
 
 	public Text selectedCountryText;
 	public Text defendingCountryText;
 
 	GameObject scriptHolder, GUI;
+	GameObject storedDefender;
 
 	TextGenerator atkTextGen, defTextGen;
 	TextGenerationSettings atkSetting, defSetting;
 
+	Color storedColour;
+
 	Vector3 defTextAdjust, atkTextPos ;
-	float atkWidth, defWidth;
+	string fromCountryName, toCountryName;
+	float atkWidth, defWidth, atkHeight, defHeight;
+	int soldierNumbers;
 
 	void Awake(){
 		scriptHolder = GameObject.FindGameObjectWithTag ("ScriptHolder");
 		countryManagement = scriptHolder.GetComponent<CountryManagement> ();
 		teamChecker = scriptHolder.GetComponent<TeamChecker> ();
+		playerTurn = scriptHolder.GetComponent<PlayerTurn> ();
 
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		gameInstructions = GUI.GetComponent<GameInstructions> ();
@@ -34,15 +41,41 @@ public class DisplayEditor : MonoBehaviour {
 		defTextGen = new TextGenerator ();
 	}
 
-	// Display selected country stats
-	public void SelectedTerritory(GameObject country){
-		selectedCountryText.text = country.name + "(" + countryManagement.GetArmySize (country.name) + ")";
+
+	// ------------------------- OPENING PHASE  -------------------------
+
+	// "1 Soldier placed on country(size)" - AllocateSoldiers.DropSoldier
+	public void OpeningPlaceSoldier(GameObject country){
+		DefaultPosition();
+		selectedCountryText.text = "1 Soldier placed on " + country.name + AddCountrySize(country);
 		SetColour (selectedCountryText, country);
-		RemoveBattleText ();
 	}
+
+
+	// ------------------------- SETUP PHASE  -------------------------
+
+	// "X soldiers added to country"
+	public void SetupDeploySoldier(GameObject country){
+		DefaultPosition();
+		// counts up all the soldiers placed on the country this turn
+		soldierNumbers = 0;
+		foreach (Transform soldier in country.transform) {
+			if (soldier.tag == "DeployedSoldier") {
+				soldierNumbers++;
+			}
+		}
+		selectedCountryText.text = soldierNumbers + " soldier(s) added to " + country.name + AddCountrySize (country);
+		SetColour (selectedCountryText, country);
+	}
+
+	// ------------------------- ATTACK PHASE  -------------------------
+
+
+	// ---------- Attack ----------
 
 	// Display "attacker -->"
 	public void AttackingTerritory(GameObject attacker){
+		DefaultPosition();
 		// set attack text
 		selectedCountryText.text = attacker.name + "(" + countryManagement.GetArmySize (attacker.name) + ") is attacking... ";
 		SetColour (selectedCountryText, attacker);
@@ -55,35 +88,119 @@ public class DisplayEditor : MonoBehaviour {
 	public void BattlingTerritories(GameObject attacker, GameObject defender){
 		if (attacker == null || defender == null)
 			return;
+		DefaultPosition();
 		// set attacker text
 		selectedCountryText.text = attacker.name + "(" + countryManagement.GetArmySize (attacker.name) + ") is attacking ";
 		SetColour (selectedCountryText, attacker);
 		// set defender text
 		defendingCountryText.text = defender.name + "(" + countryManagement.GetArmySize (defender.name) + ")";
 		SetColour (defendingCountryText, defender);
+		// stores defender attributes for BattleResult use
+		storedDefender = defender;
+		storedColour = teamChecker.PlayerColour (defender);
 
-		BattleTxtPos ();
+		HorizontalBattleTxtPos ();
 		gameInstructions.PressBattle ();
+	}
+		
+	// ---------- Battle ----------
+
+	// remove the "YOU" for when its not player turn
+
+	// shows battle outcome and keep battling/move onto movement phase - Attack.ATTACK
+	public void BattleResult(GameObject attackingCountry, GameObject defendingCountry, int deadAttackers, int deadDefenders){
+		VerticalBattleTxtPos ();
+		// player lost x soldiers
+		selectedCountryText.text = "You lost: " + deadAttackers + " soldier(s)";
+		SetColour (selectedCountryText, attackingCountry);
+		// defender lost x soldiers
+		defendingCountryText.text = "Player " + teamChecker.GetPlayer (storedDefender) + " lost " + deadDefenders + " soldier(s)";
+		defendingCountryText.color = storedColour;
 	}
 
 	public void CannotAttack(GameObject attacker, GameObject defender){
+		DefaultPosition();
 		// attacker cant attack...
 		selectedCountryText.text = attacker.name + " cannot attack ";
 		SetColour (selectedCountryText, attacker);
 		// defender
 		defendingCountryText.text = defender.name;
 		SetColour (defendingCountryText, defender);
+		HorizontalBattleTxtPos ();
+	}
 
-		BattleTxtPos ();
+	// ------------------------- MOVEMENT  -------------------------
+
+	// movement button
+	public void MovementFrom(){
+		DefaultPosition ();
+		selectedCountryText.text = "Move troops from...(select a country)";
+		selectedCountryText.color = teamChecker.GetColour (playerTurn.CurrentPlayer ());
+	}
+
+	// selected fromCountry
+	public void MovementTo(GameObject fromCountry){
+		selectedCountryText.text = "Move troops from " + fromCountry.name + " to...(select a country)";
+		SetColour (selectedCountryText, fromCountry);
+	}
+
+	// Selected toCountry & +/- buttons
+	public void InitiateMovement(GameObject fromCountry, GameObject toCountry, int troopsMoved){
+		// reverse names if required
+		if (troopsMoved < 0) {
+			fromCountryName = toCountry.name;
+			toCountryName = fromCountry.name;
+			troopsMoved = -troopsMoved;
+		} else {
+			fromCountryName = fromCountry.name;
+			toCountryName = toCountry.name;
+		}
+		selectedCountryText.text = troopsMoved + " soldier(s) moved from " + fromCountryName + " to " + toCountryName;
+		SetColour (selectedCountryText, fromCountry);
+	}
+
+
+	// ------------------------- OTHER  -------------------------
+
+	// returns "(country size)"
+	string AddCountrySize(GameObject country){
+		return " (" + countryManagement.GetArmySize (country.name) + ")";
+	}
+
+	// set colour of text
+	void SetColour(Text textBox, GameObject country){
+		textBox.color = teamChecker.PlayerColour (country);
 	}
 		
+	// Display selected country stats
+	public void SelectedTerritory(GameObject country){
+		DefaultPosition();
+		selectedCountryText.text = country.name + AddCountrySize(country) + " selected";
+		SetColour (selectedCountryText, country);
+		RemoveBattleText ();
+	}
+
 	// removes defender text when not valid anymore
 	public void RemoveBattleText(){
+		DefaultPosition();
 		defendingCountryText.text = "";
 	}
 
-	// dynamically adjusts the textbox positions
-	void BattleTxtPos(){
+	// dual box: row set up
+	void DefaultPosition(){
+		atkTextPos = new Vector3 (574, 20, 0);
+		selectedCountryText.transform.position = atkTextPos;
+	}
+
+	// dual box: column set up
+	void PositionOne(Text textBox){
+		atkTextPos = new Vector3 (624, 40, 0);
+		textBox.transform.position = atkTextPos;
+	}
+
+	// dynamically adjusts the horizontal textbox positions
+	void HorizontalBattleTxtPos(){
+		DefaultPosition();
 		// set up settings
 		atkSetting = selectedCountryText.GetGenerationSettings (selectedCountryText.rectTransform.rect.size);
 		defSetting = defendingCountryText.GetGenerationSettings (defendingCountryText.rectTransform.rect.size);
@@ -96,13 +213,17 @@ public class DisplayEditor : MonoBehaviour {
 		// adjust defender text position according to its own and attcker text size
 		defendingCountryText.transform.SetPositionAndRotation (atkTextPos + defTextAdjust,Quaternion.identity);
 	}
-		
-	// set colour of text
-	void SetColour(Text textBox, GameObject country){
-		// hacked together
-		// TODO: gives error when run by AI players
-		textBox.color = teamChecker.PlayerColour (country);
+
+	// adjusts the vetical textbox positions
+	void VerticalBattleTxtPos(){
+		PositionOne (selectedCountryText);
+		// build adjustment vectors
+		defTextAdjust = new Vector3 (0,-20,0);
+		atkTextPos = selectedCountryText.transform.position;
+		// adjust defender text position
+		defendingCountryText.transform.SetPositionAndRotation (atkTextPos + defTextAdjust,Quaternion.identity);
 	}
 
-	//TODO: add movement phase display
+
+
 }

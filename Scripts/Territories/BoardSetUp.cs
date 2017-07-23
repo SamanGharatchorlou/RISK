@@ -11,7 +11,6 @@ public class BoardSetUp : MonoBehaviour {
 	public InputField inputData;
 
 	AddSoldier addSoldier;
-	ArmyManagement armyManagement;
 	CountryManagement countryManagement;
 	SoldierManagement soldierManagement;
 	GameStats gameStats;
@@ -20,6 +19,7 @@ public class BoardSetUp : MonoBehaviour {
 	OpeningDeployment openingDeployment;
 	GameInstructions gameInstructions;
 	PlayerTurn playerTurn;
+	ButtonColour buttonColour;
 
 	GameObject scriptHolder, GUI, clone;
 
@@ -41,21 +41,20 @@ public class BoardSetUp : MonoBehaviour {
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		openingDeployment = GUI.GetComponent<OpeningDeployment> ();
 		gameInstructions = GUI.GetComponent<GameInstructions> ();
+		buttonColour = GUI.GetComponent<ButtonColour> ();
 
 		scriptHolder = GameObject.FindGameObjectWithTag ("ScriptHolder");
-		armyManagement = scriptHolder.GetComponent<ArmyManagement> ();
 		soldierManagement = scriptHolder.GetComponent<SoldierManagement> ();
 		allocateSoldiers = scriptHolder.GetComponent<AllocateSoldiers> ();
 		phases = scriptHolder.GetComponent<Phases> ();
 		playerTurn = scriptHolder.GetComponent<PlayerTurn> ();
+		countryManagement = scriptHolder.GetComponent<CountryManagement> ();
 
 		gameStats = this.GetComponentInChildren<GameStats> ();
 
 		inputBox = GameObject.Find ("InputField");
 	}
-
-
-
+		
 	// Starts the game - runs all required functions (Start Game button)
 	public void StartGame(){
 		if (numberOfPlayers <= 5 & numberOfPlayers >= 3) {
@@ -76,6 +75,8 @@ public class BoardSetUp : MonoBehaviour {
 			Destroy (inputBox);
 			// removes all accidental country selections before game starts
 			ClearSelections();
+			// locks start button after single use
+			buttonColour.LockButton("start");
 		}
 	}
 
@@ -113,7 +114,7 @@ public class BoardSetUp : MonoBehaviour {
 				// make the soldiers random colours
 				randomPlayerNum = RandomPlayer();
 				soldierManagement.SetSoldierColour (clone, randomPlayerNum);
-				armyManagement.UpdateTroopNumbers (country.gameObject, 1);
+				countryManagement.ChangeArmySize (country.gameObject, 1);
 			}
 		}
 		// selects Alaska as the default selected country - prevent +button at the start error
@@ -153,5 +154,3 @@ public class BoardSetUp : MonoBehaviour {
 	}
 
 }
-
-//TODO: no need for starting phase?
