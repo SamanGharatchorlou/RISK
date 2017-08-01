@@ -8,7 +8,6 @@ public class AddSoldier : MonoBehaviour {
 	CountryManagement countryManagement;
 	SoldierManagement soldierManagement;
 	TroopCount troopCount;
-	TeamChecker teamChecker;
 	Phases phases;
 
 	GameObject scriptHolder, territories;
@@ -19,7 +18,6 @@ public class AddSoldier : MonoBehaviour {
 	Vector3 soldierPosition, adjustment;
 
 	float childMass, countryMass;
-	float r, g, b, a;
 	int soldierNumber;
 	int x, n;
 

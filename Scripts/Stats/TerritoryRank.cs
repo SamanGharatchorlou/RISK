@@ -10,8 +10,7 @@ public class TerritoryRank : MonoBehaviour {
 
 	TerritoryCount territoryCount;
 	PlayerRank playerRank;
-
-	int numberOfPlayers;
+    
 	bool activeCatagory;
 
 	void Awake () {

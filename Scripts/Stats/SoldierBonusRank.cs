@@ -10,8 +10,7 @@ public class SoldierBonusRank : MonoBehaviour {
 
 	SoldierBonus soldierBonus;
 	PlayerRank playerRank;
-
-	int numberOfPlayers;
+    
 	bool activeCatagory;
 
 	void Awake () {

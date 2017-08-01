@@ -18,7 +18,7 @@ public class LockoutPlayer : MonoBehaviour {
 
 	// locks buttons during AI turn and unlocks during player turn - PlayerTurn
 	public void ButtonLocks(){
-		if (playerTurn.CurrentPlayer()==1) {
+		if (playerTurn.CurrentPlayer()==6) {
 			plus.interactable = true;
 			minus.interactable = true;
 			attack.interactable = true;

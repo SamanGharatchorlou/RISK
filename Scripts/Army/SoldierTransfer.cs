@@ -10,6 +10,7 @@ public class SoldierTransfer : MonoBehaviour {
 	Attack attack;
 	Phases phases;
 	ButtonColour buttonColour;
+	AudioFadeOut audioFadeOut;
 
 	GameObject GUI;
 	public GameObject fromCountry, toCountry;
@@ -21,6 +22,7 @@ public class SoldierTransfer : MonoBehaviour {
 		countryManagement = this.GetComponent<CountryManagement> ();
 		attack = this.GetComponent<Attack> ();
 		phases = this.GetComponent<Phases> ();
+		audioFadeOut = this.GetComponent<AudioFadeOut> ();
 
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		buttonColour = GUI.GetComponent<ButtonColour> ();
@@ -38,6 +40,9 @@ public class SoldierTransfer : MonoBehaviour {
 	public void FwdTransferTroops(){
 		// only run code on battle phase
 		if (phases.battlePhase) {
+			// play audio
+			audioFadeOut.MoreTroopsAudio();
+			// lock in current selections
 			fromCountry = attack.attackingCountry;
 			toCountry = attack.defendingCountry;
 			// error prevention
@@ -54,6 +59,9 @@ public class SoldierTransfer : MonoBehaviour {
 	public void BackTransferTroops(){
 		// only run code on battle phase
 		if (phases.battlePhase) {
+			// play audio
+			audioFadeOut.MoreTroopsAudio();
+			// lock in current selections
 			fromCountry = attack.attackingCountry;
 			toCountry = attack.defendingCountry;
 			// maximum number of attackers is 3

@@ -8,8 +8,6 @@ public class ChangeCatagory : MonoBehaviour {
 
 	public Text categoryButton;
 
-	Text categoryHeader;
-
 	PlayerRank playerRank;
 	TroopRank troopRank;
 	TerritoryRank territoryRank;
@@ -18,8 +16,6 @@ public class ChangeCatagory : MonoBehaviour {
 
 	public GameObject catBoxPlacer;
 	GameObject scriptHolder;
-
-	Vector3 catCellPos, adjustPosY;
 
 	void Awake() {
 		playerRank = this.GetComponent<PlayerRank> ();
@@ -34,21 +30,21 @@ public class ChangeCatagory : MonoBehaviour {
 	// when code is run change catagories - Index 1 is the active category
 	public void RotateCategory(){
 		if (!phases.openingPhase) {
-			// changes category 
-			switch (categoryButton.text) {
-			case "Troop Count":
-				categoryButton.text = "Territory Count";
-				playerRank.RankedTerrCount ();
-				break;
-			case "Territory Count":
-				categoryButton.text = "Soldier Bonus";
-				playerRank.RankedSoldierBonus ();
-				break;
-			default: // case for "Soldier Bonus"
-				categoryButton.text = "Troop Count";
-				playerRank.RankedTroopCount ();
-				break;
-			}
+            // changes category 
+            switch (categoryButton.text) {
+                case "Troop Count":
+                    categoryButton.text = "Territory Count";
+                    playerRank.RankedTerrCount();
+                    break;
+                case "Territory Count":
+                    categoryButton.text = "Soldier Bonus";
+                    playerRank.RankedSoldierBonus();
+                    break;
+                default: // case for "Soldier Bonus"
+                    categoryButton.text = "Troop Count";
+                    playerRank.RankedTroopCount();
+                    break;
+            }
 			// allows the active category display to update - via other rank scripts
 			troopRank.UpdateTroopCountDisplay (categoryButton.text);
 			territoryRank.UpdateTerritoryRankDisplay (categoryButton.text);

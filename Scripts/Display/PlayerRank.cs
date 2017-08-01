@@ -21,7 +21,7 @@ public class PlayerRank : MonoBehaviour {
 	GameObject cell;
 	GameObject scriptHolder;
 
-	Text textBox, cellText, playerHeader, category;
+	Text textBox, cellText, playerHeader;
 
 	Color teamColour;
 

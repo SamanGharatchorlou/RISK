@@ -5,6 +5,8 @@ using UnityEngine;
 // add or remove soldiers from the battle field
 public class ArmyManagement : MonoBehaviour {
 
+	public AudioSource click;
+
 	AddSoldier addSoldier;
 	CountryManagement countryManagement;
 	TeamChecker teamChecker;
@@ -16,6 +18,7 @@ public class ArmyManagement : MonoBehaviour {
 	ReceiveBonus receiveBonus;
 	Attack attack;
 	ButtonColour buttonColour;
+	AudioFadeOut audioFadeOut;
 
 	GameObject country, soldierToDelete;
 	GameObject GUI, territories;
@@ -31,6 +34,7 @@ public class ArmyManagement : MonoBehaviour {
 		playerTurn = this.GetComponent<PlayerTurn> ();
 		deploySoldiers = this.GetComponent<DeploySoldiers> ();
 		attack = this.GetComponent<Attack> ();
+		audioFadeOut = this.GetComponent<AudioFadeOut> ();
 
 		territories = GameObject.FindGameObjectWithTag ("Territories");
 		troopCount = territories.GetComponent<TroopCount> ();
@@ -40,10 +44,13 @@ public class ArmyManagement : MonoBehaviour {
 		receiveBonus = GUI.GetComponent<ReceiveBonus> ();
 		buttonColour = GUI.GetComponent<ButtonColour> ();
 	}
+
+	//TODO: move all troops to a country then pressing minus move them all back, once back to the original position the + button becomes unactive grey and locked.
 		
 	// Add a soldier to the selected country - setup phase only
 	public void Add(){
 		if (phases.setupPhase) {
+			audioFadeOut.MoreTroopsAudio ();
 			country = GameObject.FindGameObjectWithTag ("SelectedCountry");
 			if (teamChecker.UnderControl (country) & deploySoldiers.CanAddSoldier()) {
 				addSoldier = country.GetComponent<AddSoldier> ();
@@ -57,6 +64,7 @@ public class ArmyManagement : MonoBehaviour {
 	// Remove a soldier from the selected country - setup phase only
 	public void Remove(){
 		if (phases.setupPhase) {
+			click.Play ();
 			country = GameObject.FindGameObjectWithTag ("SelectedCountry");
 			// Creates a list of the country's soldiers
 			soldiers = new List<GameObject> ();

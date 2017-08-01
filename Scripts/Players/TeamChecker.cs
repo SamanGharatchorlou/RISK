@@ -8,7 +8,6 @@ public class TeamChecker : MonoBehaviour {
 	PlayerTurn playerTurn;
 
 	GameObject scriptHolder;
-	GameObject country;
 	Transform childObject;
 
 	Renderer rend;
@@ -16,7 +15,7 @@ public class TeamChecker : MonoBehaviour {
 
 	float r, g, b;
 	int playerIndex;
-	int indexPlayer, rd, gn, bl, a;
+	int indexPlayer, a;
 
 
 	void Awake () {

@@ -17,7 +17,6 @@ public class LinkedTerritories : MonoBehaviour {
 	GameInstructions gameInstructions;
 
 	GameObject GUI;
-	GameObject toCountry;
 
 	bool safePassage, runWhileLoop;
 
@@ -46,7 +45,6 @@ public class LinkedTerritories : MonoBehaviour {
 			// checks if the required country has been reached
 			foreach (string safeCountry in safePathList) {
 				if (safeCountry == toCountry.name) {
-					gameInstructions.MoveTroopButtons (fromCountry.name, toCountry.name);
 					// end loop
 					EndCheck();
 					safePassage = true;

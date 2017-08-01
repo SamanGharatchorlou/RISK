@@ -12,11 +12,9 @@ public class TargetCountry : MonoBehaviour {
 	GameInstructions gameInstructions;
 	CountryManagement countryManagement;
 
-	Text attackBtnText;
-
 	GameObject GUI, scriptHolder;
 	public GameObject attackingCountry, defendingCountry;
-	GameObject previousCountry, selectedCountry;
+	GameObject previousCountry;
 	public Button attackButton;
 
 	public bool selectingDefender;

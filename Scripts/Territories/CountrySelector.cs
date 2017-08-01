@@ -8,15 +8,15 @@ public class CountrySelector : MonoBehaviour {
 	TargetCountry targetCountry;
 	Phases phases;
 	AllocateSoldiers allocateSoldiers;
-	GameInstructions gameInstructions;
 	ButtonColour buttonColour;
 	ArmyMovement armyMovement;
 	PlayerTurn playerTurn;
+	AudioFadeOut audioFadeOut;
+	TeamChecker teamChecker;
 
 	public GameObject country;
 	GameObject scriptHolder, GUI;
 	GameObject previousCountry;
-	GameObject fromCountry, toCountry;
 
 	void Awake(){
 		scriptHolder = GameObject.FindGameObjectWithTag ("ScriptHolder");
@@ -25,17 +25,18 @@ public class CountrySelector : MonoBehaviour {
 		phases = scriptHolder.GetComponent<Phases> ();
 		armyMovement = scriptHolder.GetComponent<ArmyMovement> ();
 		playerTurn = scriptHolder.GetComponent<PlayerTurn> ();
+		audioFadeOut = scriptHolder.GetComponent<AudioFadeOut> ();
+		teamChecker = scriptHolder.GetComponent<TeamChecker> ();
 
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		displayEditor = GUI.GetComponent<DisplayEditor> ();
-		gameInstructions = GUI.GetComponent<GameInstructions> ();
 		buttonColour = GUI.GetComponent<ButtonColour> ();
 		}
 
 	//Remove presvious country selected and add tag to new country selection
 	void OnMouseDown(){
-		
-		//TODO: adjust this to take human players into account
+		audioFadeOut.Click ();
+		//TODO: adjust this to take the number human players into account
 		// cannot select countries during AI turn
 		if (playerTurn.CurrentPlayer () != 1)
 			return;
@@ -49,17 +50,10 @@ public class CountrySelector : MonoBehaviour {
 		country = gameObject.transform.parent.gameObject;
 		country.gameObject.tag = "SelectedCountry";
 
-		// runs game instructions when player needs to select the +/- to move troops
-		if (phases.movementPhase & previousCountry == null)
-			gameInstructions.MoveTroopButtons (country.name,country.name);
-
-		// selects countries to move troops between
-		if (armyMovement.movementSelected)
-			armyMovement.MovementCountries (country);
-
 		// activates and deactivates button colours
 		buttonColour.SetupPlusMinusColour ();
-		buttonColour.BattleAttackColour (targetCountry.selectingDefender);
+		if (phases.battlePhase)
+			buttonColour.BattleAttackColour (targetCountry.selectingDefender);
 
 		// sets the target as "defender" rather than "selectedCountry" when target country to attack
 		if (targetCountry.selectingDefender) {
@@ -67,13 +61,23 @@ public class CountrySelector : MonoBehaviour {
 			return;
 		}
 
-		// doesnt display selected territory during movement phase (other display is show)
+		// movement phase mechanics
+		if (phases.movementPhase) {
+			buttonColour.MovementSelectFromCountry(country);
+			// selects countries to move troops between
+			if(armyMovement.movementSelected)
+				armyMovement.MovementCountries (country);
+		}
+
+		// doesnt display selected territory during movement phase (other display is shown)
 		if (armyMovement.movementSelected)
 			return;
 		
 		// place soldiers during the opening phase script
-		if (phases.openingPhase)
+		if (phases.openingPhase & teamChecker.UnderControl(country)) {
 			allocateSoldiers.DropSoldier (country);
+			audioFadeOut.MoreTroopsAudio ();
+		}
 
 		// Runs display selected country, doesnt run when selecting attacker or defender
 		displayEditor.SelectedTerritory (country);

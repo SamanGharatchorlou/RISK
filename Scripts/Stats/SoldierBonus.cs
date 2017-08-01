@@ -10,8 +10,7 @@ public class SoldierBonus : MonoBehaviour {
 	TerritoryBonus territoryBonus;
 	ContinentBonus continentBonus;
 	SoldierBonusRank soldierBonusRank;
-
-	int playerSoldierBonus;
+    
 	string player;
 
 	void Awake(){

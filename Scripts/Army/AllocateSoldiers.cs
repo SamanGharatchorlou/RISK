@@ -27,7 +27,6 @@ public class AllocateSoldiers : MonoBehaviour {
 	GameObject territories, GUI;
 
 	public bool openingPhase;
-	bool soldiersDeployed;
 
 	int startingArmies, playerArmies;
 	int currentPlayer, soldiersLeft;
@@ -55,7 +54,7 @@ public class AllocateSoldiers : MonoBehaviour {
 	// Build a soldier bank holding the number of soldiers each player has left to deploy - BoardSetUp
 	public void BuildSoldierBank(int numberOfPlayers){
 		// the number of starting armies each player receives - should be 50 - ....
-		startingArmies = 35 - (5 * numberOfPlayers);
+		startingArmies = 50 - (5 * numberOfPlayers);
 		// build list of giving the number of starting armies each player gets after land has been allocated
 		for (int i = 1; i <= numberOfPlayers; i++) {
 			playerArmies = startingArmies - troopCount.troopCounter ["Player" + i];
@@ -68,7 +67,6 @@ public class AllocateSoldiers : MonoBehaviour {
 	// places a single soldier on mouse click and changes player turn - opening phase only
 	public void DropSoldier(GameObject country){
 		currentPlayer = playerTurn.CurrentPlayer ();
-		print (dropCounter);
 		// can only drop soldier on owned territory
 		if (teamChecker.UnderControl(country) & dropCounter == playerTurn.turn) {
 			// place a soldier on the selected country

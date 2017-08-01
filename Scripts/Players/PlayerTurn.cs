@@ -17,6 +17,9 @@ public class PlayerTurn : MonoBehaviour {
 	LockoutPlayer lockoutPlayer;
 	AllocateSoldiers allocateSoldiers;
 	DisplayTurn displayTurn;
+	ChangeCatagory changeCategory;
+	GameInstructions gameInstructions;
+	BoardSetUp boardSetUp;
 
 	GameObject territories, GUI;
 
@@ -34,10 +37,13 @@ public class PlayerTurn : MonoBehaviour {
 
 		territories = GameObject.FindGameObjectWithTag ("Territories");
 		continentBonus = territories.GetComponent<ContinentBonus> ();
+		changeCategory = territories.GetComponent<ChangeCatagory> ();
+		boardSetUp = territories.GetComponent<BoardSetUp> ();
 
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		lockoutPlayer = GUI.GetComponent<LockoutPlayer> ();
 		displayTurn = GUI.GetComponent<DisplayTurn> ();
+		gameInstructions = GUI.GetComponent<GameInstructions> ();
 	}
 
 	void Start(){
@@ -82,6 +88,24 @@ public class PlayerTurn : MonoBehaviour {
 		return currentPlayerTurn+1;
 	}
 
+	//NOTE: hasnt actually been used anywhere yet.
+	// returns the next players number
+	public int FollowingPlayer(){
+		// returns the next player for every player but the last player
+		/*for (int b = 0; b < turnOrder.Count-1; b++) {
+			if (turnOrder [b])
+				return b+1;
+		}
+		// if none return it must be the last players turn so return player 1 as next player
+		return 1;*/
+
+		if (CurrentPlayer () < boardSetUp.numberOfPlayers)
+			return CurrentPlayer () + 1;
+		else
+			return 1;
+
+	}
+
 	// Ends the current players turn
 	public void NextPlayer(bool activeAIPlayer) {
 		for (int i = 0; i < turnOrder.Count; i++) {
@@ -97,15 +121,15 @@ public class PlayerTurn : MonoBehaviour {
 				else
 					turnOrder [0] = true;
 				// updates turn number
-				turn ++;
+				turn++;
 			}
 		}
 		UpdateStats ();
 		// activate AI player - some circumstances require the AI code not to run (allocateSoldiers.EndOpeningPhase)
-		if (activeAIPlayer)
+		if (activeAIPlayer) {
 			ActivateAI ();
-		// locks/unlocks buttons for players
-		lockoutPlayer.ButtonLocks ();
+			lockoutPlayer.ButtonLocks ();
+		}
 	}
 		
 	// activate AI players if its not player 1
@@ -122,11 +146,17 @@ public class PlayerTurn : MonoBehaviour {
 		continentBonus.UpdateContBonus ();
 		// give player bonus soldiers
 		deploySoldiers.BonusStore ();
-		// displays the player and game turn numbers
+		// displays the players turn, game turn numbers & game instructions
 		displayTurn.UpdateTurnText (CurrentPlayer(),turn);
+		gameInstructions.PlaceTroops ();
 		// prevents player adding multiple players during openingPhase
 		if(phases.openingPhase)
 			allocateSoldiers.dropCounter = turn;
+		// update rank display before player 1's turn - 3 rotations brings it back to original category
+		if (!phases.openingPhase & CurrentPlayer () ==  1) {
+			for (int i = 0; i < 3; i++)
+				changeCategory.RotateCategory ();
+		}
 	}
 
 }

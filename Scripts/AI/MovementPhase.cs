@@ -8,7 +8,6 @@ public class MovementPhase : MonoBehaviour {
 	List<string> fromCountries;
 	List<string> inlandCountries;
 
-	List<string> toCountries;
 	List<string> controlledCountries;
 	List<string> frontlineCountries;
 
@@ -20,7 +19,6 @@ public class MovementPhase : MonoBehaviour {
 
 	GameObject toCountry, fromCountry, frontlineCountry;
 
-	string fromCountryName, toCountryName ;
 	int inlandArmySize, inlandCountryMax, fromCountrySize;
 	float movementDelay;
 
@@ -34,6 +32,13 @@ public class MovementPhase : MonoBehaviour {
 
 	// Calls the MoveTroops method if required - called in AIController
 	public void AIMoveSoldiers(){
+		// skips dead player
+		if (phases.deadPlayer) {
+			// reset deadPlayer variable
+			phases.deadPlayer = false;
+			phases.EndPhase ();
+			return;
+		}
 		movementDelay = globalFunctions.timeDelay;
 		// selects fromCountry and toCountry
 		InlandToFrontline();
@@ -87,6 +92,7 @@ public class MovementPhase : MonoBehaviour {
 		}
 
 		//----toCountry---- connected frontline country with the largest army
+		toCountry = null;
 		frontlineCountries = new List<string>();
 		// list of all controlled countries
 		controlledCountries = globalFunctions.ControlledCountryList (1);
@@ -114,6 +120,9 @@ public class MovementPhase : MonoBehaviour {
 		// being called means no inland countries have armies > 1 therefore can assume all
 		// countries with armies > 1 are frontline countries
 		frontlineCountries = globalFunctions.ControlledCountryList (2);
+		// unless all players are dead, which case do nothing
+		if (frontlineCountries.Count == 0)
+			return;
 		
 		// sort list by army size
 		frontlineCountries = globalFunctions.SortList (frontlineCountries);

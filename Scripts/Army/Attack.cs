@@ -5,23 +5,26 @@ using UnityEngine;
 // country with tag "AttackingCountry" battles country with tag "DefendingCountry"
 public class Attack : MonoBehaviour {
 
+	public AudioSource battleSound;
+	public AudioSource click;
+
 	TargetCountry targetCountry;
 	ArmyManagement armyManagement;
 	CountryManagement countryManagement;
 	DiceRoll diceRoll;
-	AddSoldier addSoldier;
 	TargetingNetwork targetingNetwork;
 	TakeControl takeControl;
 	Phases phases;
 	TeamChecker teamChecker;
 	GameInstructions gameInstructions;
 	DisplayEditor displayEditor;
+	AudioFadeOut audioFadeOut;
 
 	public GameObject attackingCountry, defendingCountry;
-	GameObject GUI, Territories;
+	GameObject GUI;
 
 	public bool canAttack, UpdateTroopCnt;
-	bool Neighbours, Enemies;
+	bool Neighbours;
 
 	public int attackingPlayer, defendingPlayer, attackerArmySize, defenderArmySize;
 	int deadAttackers, deadDefenders;
@@ -39,12 +42,14 @@ public class Attack : MonoBehaviour {
 		phases = this.GetComponent<Phases> ();
 		teamChecker = this.GetComponent<TeamChecker> ();
 		targetCountry = this.GetComponent<TargetCountry> ();
+		audioFadeOut = this.GetComponent<AudioFadeOut> ();
 	}
 
 	// Two countries battle i.e one set of die rolls (max 2 deaths) ---- Battle button ----
 	public void ATTACK(){
 		// only run code during battle phase
 		if (phases.battlePhase == true) {
+			click.Play ();
 			// these two functions set the attacking and defending country variables
 			AttackerArmySize ();
 			DefenderArmySize ();
@@ -65,6 +70,12 @@ public class Attack : MonoBehaviour {
 
 	// BATTLE! - calculates remaining troops
 	void Battle(int attackers, int defenders){
+		if (!battleSound.isPlaying) {
+			//battleSound.Play ();
+			battleSound.time = Random.Range(0f,battleSound.clip.length);
+			battleSound.Play();
+			StartCoroutine (audioFadeOut.FadeOut (battleSound, 3f));
+		}
 		// attackers must leave 1 man behind
 		attackers = attackers-1;
 		diceRoll.CalculateBattle(attackers,defenders,out deadAttackers,out deadDefenders);

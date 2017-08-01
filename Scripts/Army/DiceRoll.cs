@@ -9,7 +9,7 @@ public class DiceRoll : MonoBehaviour {
 	List<int> defenderValues;
 	List<int> rollValues;
 
-	int deadAttackers, deadDefenders, roll;
+	int roll;
 
 	// Roll dice
 	List<int> Roll(int repeat){

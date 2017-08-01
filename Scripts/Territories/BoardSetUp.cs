@@ -7,8 +7,11 @@ using UnityEngine.UI;
 public class BoardSetUp : MonoBehaviour {
 
 	public List <int[]> landBank;
-
 	public InputField inputData;
+    public Button startButton;
+
+	public AudioSource openingSound;
+	public AudioSource backgroundAudio;
 
 	AddSoldier addSoldier;
 	CountryManagement countryManagement;
@@ -19,29 +22,21 @@ public class BoardSetUp : MonoBehaviour {
 	OpeningDeployment openingDeployment;
 	GameInstructions gameInstructions;
 	PlayerTurn playerTurn;
-	ButtonColour buttonColour;
+	AudioFadeOut audioFadeOut;
 
 	GameObject scriptHolder, GUI, clone;
 
-	float r, g, b, a;
-
 	public int numberOfPlayers;
-	int playerNumber, randomPlayerNum;
-	int territoryCount, territoriesAllocated, territoriesLeft;
+	int randomPlayerNum;
+	int territoryCount, territoriesAllocated;
 	int randomIndex, update, stroredValue;
 
-	string inputValue;
-
-	bool gameStarted;
-
 	GameObject inputBox;
-	InputField someInput;
 
 	void Awake (){
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		openingDeployment = GUI.GetComponent<OpeningDeployment> ();
 		gameInstructions = GUI.GetComponent<GameInstructions> ();
-		buttonColour = GUI.GetComponent<ButtonColour> ();
 
 		scriptHolder = GameObject.FindGameObjectWithTag ("ScriptHolder");
 		soldierManagement = scriptHolder.GetComponent<SoldierManagement> ();
@@ -49,6 +44,7 @@ public class BoardSetUp : MonoBehaviour {
 		phases = scriptHolder.GetComponent<Phases> ();
 		playerTurn = scriptHolder.GetComponent<PlayerTurn> ();
 		countryManagement = scriptHolder.GetComponent<CountryManagement> ();
+		audioFadeOut = scriptHolder.GetComponent<AudioFadeOut> ();
 
 		gameStats = this.GetComponentInChildren<GameStats> ();
 
@@ -73,16 +69,23 @@ public class BoardSetUp : MonoBehaviour {
 			gameInstructions.OpeningPhasePlacement ();
 			// remove input box from game
 			Destroy (inputBox);
+			// fades out audio over 4s
+			StartCoroutine(audioFadeOut.FadeOut(openingSound,2f));
+			backgroundAudio.Play ();
 			// removes all accidental country selections before game starts
 			ClearSelections();
-			// locks start button after single use
-			buttonColour.LockButton("start");
+            // locks start button after single use
+            //TODO: this doesnt work
+            startButton.gameObject.SetActive(false);
+            inputData.gameObject.SetActive(false);
 		}
 	}
 
-	// player inputs number of players
+	// player inputs number of enemies
 	public void InputPlayerNumbers(string playerNumbers){
-		numberOfPlayers = int.Parse (playerNumbers);
+		if (playerNumbers != "")
+			// number of players = enemies + human player
+			numberOfPlayers = int.Parse (playerNumbers) + 1;
 	}
 
 	// builds a bank with the number of territories allocated by each player at start of game

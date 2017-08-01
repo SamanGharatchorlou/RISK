@@ -9,8 +9,7 @@ public class SoldierManagement : MonoBehaviour {
 
 	Color playerColour;
 	Renderer rend;
-
-	int playerNumber;
+    
 	float r, g, b, a;
 
 	void Awake(){

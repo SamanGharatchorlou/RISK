@@ -23,8 +23,8 @@ public class DisplayEditor : MonoBehaviour {
 
 	Vector3 defTextAdjust, atkTextPos ;
 	string fromCountryName, toCountryName;
-	float atkWidth, defWidth, atkHeight, defHeight;
-	int soldierNumbers;
+	float atkWidth, defWidth;
+	int soldierNumbers, currentPlayer, enemyPlayer;
 
 	void Awake(){
 		scriptHolder = GameObject.FindGameObjectWithTag ("ScriptHolder");
@@ -105,16 +105,24 @@ public class DisplayEditor : MonoBehaviour {
 		
 	// ---------- Battle ----------
 
-	// remove the "YOU" for when its not player turn
-
 	// shows battle outcome and keep battling/move onto movement phase - Attack.ATTACK
 	public void BattleResult(GameObject attackingCountry, GameObject defendingCountry, int deadAttackers, int deadDefenders){
 		VerticalBattleTxtPos ();
 		// player lost x soldiers
-		selectedCountryText.text = "You lost: " + deadAttackers + " soldier(s)";
+		currentPlayer = playerTurn.CurrentPlayer();
+		// customised text if player is attacking
+		if (currentPlayer == 1)
+			selectedCountryText.text = "You lost: " + deadAttackers + " soldier(s)";
+		else
+			selectedCountryText.text = "Player " + playerTurn.CurrentPlayer () + " lost: " + deadAttackers + " soldier(s)";
 		SetColour (selectedCountryText, attackingCountry);
 		// defender lost x soldiers
-		defendingCountryText.text = "Player " + teamChecker.GetPlayer (storedDefender) + " lost " + deadDefenders + " soldier(s)";
+		enemyPlayer = teamChecker.GetPlayer (storedDefender);
+		// customised text if player is defending
+		if (enemyPlayer == 1)
+			defendingCountryText.text = "You lost " + deadDefenders + " soldier(s)";
+		else
+			defendingCountryText.text = "Player " + teamChecker.GetPlayer (storedDefender) + " lost " + deadDefenders + " soldier(s)";
 		defendingCountryText.color = storedColour;
 	}
 
@@ -131,22 +139,22 @@ public class DisplayEditor : MonoBehaviour {
 
 	// ------------------------- MOVEMENT  -------------------------
 
-	// movement button
-	public void MovementFrom(){
+	// movement button - fromCountry selected
+	public void MovementFrom(GameObject fromCountry){
 		DefaultPosition ();
-		selectedCountryText.text = "Move troops from...(select a country)";
+		selectedCountryText.text = "Moving troops from " + fromCountry.name;
 		selectedCountryText.color = teamChecker.GetColour (playerTurn.CurrentPlayer ());
 	}
 
-	// selected fromCountry
-	public void MovementTo(GameObject fromCountry){
-		selectedCountryText.text = "Move troops from " + fromCountry.name + " to...(select a country)";
+	// selected fromCountry - toCountry selected
+	public void MovementTo(GameObject fromCountry, GameObject toCountry){
+		selectedCountryText.text = "Moving troops from " + fromCountry.name + " to " + toCountry.name;
 		SetColour (selectedCountryText, fromCountry);
 	}
 
 	// Selected toCountry & +/- buttons
 	public void InitiateMovement(GameObject fromCountry, GameObject toCountry, int troopsMoved){
-		// reverse names if required
+		// reverses names if more troops are moved to fromCountry than toCountry
 		if (troopsMoved < 0) {
 			fromCountryName = toCountry.name;
 			toCountryName = fromCountry.name;

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class TakeControl : MonoBehaviour {
 
+	public AudioSource victoryCry;
+
 	AddSoldier addSoldier;
 	CountryManagement countryManagement;
 	ArmyManagement armyManagement;
@@ -11,11 +13,11 @@ public class TakeControl : MonoBehaviour {
 	ContinentBonus continentBonus;
 	SoldierTransfer soldierTransfer;
 	ButtonColour buttonColour;
+	GameInstructions gameInstructions;
 
 	GameObject territories, GUI;
 
 	public bool controlTaken;
-	string attackingPlayer, defendingPlayer;
 
 	void Awake () {
 		countryManagement = this.GetComponent<CountryManagement> ();
@@ -28,6 +30,7 @@ public class TakeControl : MonoBehaviour {
 
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		buttonColour = GUI.GetComponent<ButtonColour> ();
+		gameInstructions = GUI.GetComponent<GameInstructions> ();
 	}
 
 	void Start(){
@@ -37,6 +40,7 @@ public class TakeControl : MonoBehaviour {
 	// claims the land once called - removes defender and places attacker
 	// NOTE: do not change order of commands below
 	public void ClaimLand(GameObject attackingCountry, GameObject defendingCountry){
+		victoryCry.Play ();
 		controlTaken = true;
 		defendingCountry.gameObject.tag = "SelectedCountry";
 		addSoldier = defendingCountry.GetComponent<AddSoldier> ();
@@ -45,16 +49,12 @@ public class TakeControl : MonoBehaviour {
 		addSoldier.PlaceSoldier ();
 		// causes a troop to be added to defender and removed from attacker in UpdateTroopCounter;
 		countryManagement.ChangeArmySize (defendingCountry, 1);
-
 		// Removes a soldier from attacker (moved to defender land - now claimed)
 		armyManagement.RemoveDead ("AttackingCountry", 1);
-
 		// default transfers all attackers over to claimed land
 		soldierTransfer.DefaultTransfer(attackingCountry,defendingCountry);
-
 		// update the number of territories dictionary
 		territoryCount.UpdateTerritoryBank (attackingCountry, defendingCountry);
-
 		// update continent bonus
 		continentBonus.UpdateContBonus ();
 
@@ -62,6 +62,9 @@ public class TakeControl : MonoBehaviour {
 		buttonColour.BattleBattleColour(attackingCountry,defendingCountry);
 		buttonColour.BattleAttackColour (false);
 		buttonColour.BattlePlusMinusColour (false);
+
+		// update instructions
+		gameInstructions.BattleClaim(defendingCountry);
 	}
 
 }

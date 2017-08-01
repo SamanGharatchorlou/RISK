@@ -15,8 +15,6 @@ public class GameStats : MonoBehaviour {
 	PlayerRank playerRank;
 	BoardSetUp boardSetUp;
 
-	GameObject scriptHolder;
-
 	void Awake(){
 		troopCount = this.GetComponent<TroopCount> ();
 		territoryCount = this.GetComponent<TerritoryCount> ();

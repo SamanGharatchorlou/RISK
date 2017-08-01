@@ -5,9 +5,6 @@ using UnityEngine;
 public class TargetingNetwork : MonoBehaviour {
 
 	public string[][] network;
-	//public string[][] network2;
-
-	bool canAttack;
 
 	void Awake(){
 		BuildNetwork ();

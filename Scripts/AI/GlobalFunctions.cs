@@ -5,7 +5,6 @@ using UnityEngine;
 public class GlobalFunctions : MonoBehaviour {
 
 	List<string> underControl;
-	List<string> underPopulatedControl;
 	List<string> enemyNeighbours;
 
 	string[] neighbours;

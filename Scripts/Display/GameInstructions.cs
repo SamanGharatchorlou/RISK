@@ -7,42 +7,37 @@ public class GameInstructions : MonoBehaviour {
 
 	public Text instructionBox;
 
-	ArmyMovement armyMovement;
 	GameObject scriptHolder;
 	TeamChecker teamChecker;
 
-	string fromCountry, toCountry;
-
 	void Awake(){
 		scriptHolder = GameObject.FindGameObjectWithTag ("ScriptHolder");
-		armyMovement = scriptHolder.GetComponent<ArmyMovement> ();
 		teamChecker = scriptHolder.GetComponent<TeamChecker> ();
 	}
 
 	//----------------opening/set up phase----------------
 
-	// place troop during opening phase - BoardSetUp.StartGame
+	// place troop during opening phase
 	public void OpeningPhasePlacement(){
-		instructionBox.text = "Select the country you'd like to place a single troop on.";
+		instructionBox.text = "Select the country you'd like to place a troop on.";
 	}
 
-
-	// place all troops before moving on - AllocateSoldiers.EndOpeningPhase
+	// place all troops before moving on
 	public void PlaceTroops(){
-		instructionBox.text = "Deploy all your remaining troops then press 'End Setup' to move onto the battle phase.";
+		instructionBox.text = "Deploy all your remaining troops then press 'End Setup Phase'";
 	}
 
 	//----------------battle phase----------------
 
-	// select attacker - Phases.EndSetupPhase
+	// select attacker
 	public void SelectAtkCountry(){
 		instructionBox.text = "Select the country you'd like to attack with, then press 'Attack'.";
 	}
 
-	// select the defending country - DisplayEditor.AttackingTerritory
+	// select the defending country
 	public void SelectDefCountry(string attacker){
 		instructionBox.text = "You selected " + attacker + ".\n" +
-		"Who are you going to crush?";
+		"Who are you going to attack?";
 	}
 
 	// press battle button - DisplayEditor.BattlingTerritories
@@ -50,41 +45,47 @@ public class GameInstructions : MonoBehaviour {
 		instructionBox.text = "Lets fight! - press 'Battle'.";
 	}
 
-	// shows battle outcome and keep battling/move onto movement phase - Attack.ATTACK
+	// shows battle outcome and keep battling/move onto movement phase
 	public void BattleOutcome(int deadAttackers, int deadDefenders){
-		instructionBox.text = "You lost: " + deadAttackers + " army(s).\n" +
-		"Enemy lost: " + deadDefenders + " army(s).\n" +
-		"Either press battle again to continue fighting,\n" +
-		"select another country to attack with,\n" +
-		"or press 'End Battle' if you'd like to move on the movement phase.";
+		instructionBox.text =
+		"Either press battle again to continue fighting.\n" +
+		"Select another country to attack with.\n" +
+		"Or press 'End Battle Phase'";
+	}
+
+	// claimed country
+	public void BattleClaim(GameObject newCountry){
+		instructionBox.text = "You now have control of " + newCountry.name + 
+		" Select another country to attack with or\n" +
+		"press 'End Battle Phase'";
 	}
 
 	//----------------movement phase----------------
 
-	// move troops, select from country - Phases.EndBattlePhase
-	public void SelectMoveButton(){
-		instructionBox.text = "You can move a set of troops across connected territories.\n" +
-		"Select the 'Move Troops' button then select the country you want to move the troop FROM, followed by " +
-		"the country you want to move the troops TO";
+	// select the from country - Phases.EndBattlePhase
+	public void SelectFromCountry(){
+		instructionBox.text = "Select a country to move troops from, this is your 'from country'";
 	}
 
-	// select country to move troops to - ArmyMovement.MoveToBtn
-	public void SelectToCountry(GameObject fromCountry){
-		instructionBox.text = "You are moving troops from " + fromCountry.name + ".\n" +
-		"Now select the country you'd like to move the troops to.";
+	// select move button to lock in from country selection
+	public void SelectFromMoveButton(string buttonText){
+		instructionBox.text = "Press '" + buttonText + "'";
+	}
+
+	// select the to country
+	public void SelectToCountry(){
+		instructionBox.text = "Select a country to move troops to, this is your 'to country'";
+	}
+
+	// select move button to lock in to country selection
+	public void SelectToMoveButton(string buttonText){
+		instructionBox.text = "Press '" + buttonText + "' to confirm the selection";
 	}
 
 	// press +/- to transfer troops, then press end turn - CountrySelector.OnMouseDown & LinkedTerritories.SafePath
-	public void MoveTroopButtons(string fromCountry, string toCountry){
-		if (fromCountry == toCountry)
-			fromCountry = armyMovement.fromCountry.name;
-
-		if(fromCountry == null || toCountry == null)
-			return;
-		
-		instructionBox.text = "Press '+' to transfer a single troop from " + fromCountry + " to " + toCountry +
-		"\nPress '-' to move a single troop back from " + toCountry + " to " + fromCountry +
-		"\nOnce you're done press 'End Turn'.";
+	public void MoveTroopButtons(GameObject fromCountry, GameObject toCountry){
+		instructionBox.text = "Use the '+' and '-' buttons to transfer troops from " + fromCountry.name + " to " + toCountry.name +
+		"\nThen press 'End Turn'";
 	}
 
 	//----------------error messages----------------
@@ -113,11 +114,5 @@ public class GameInstructions : MonoBehaviour {
 		else
 			instructionBox.text = attacker.name + " and " + defender.name + " aren't neighbours";
 	}
-
-
-	//TODO: add a want to know your odds of winning this fight?
-	//		add a prediction mechanic -.... i predict the outcome will be...
-	//		make it more of a bot that talks and reacts to the fight make it so the player is taking on the computer
-	// 		who controls the comp players etc.
 
 }

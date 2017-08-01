@@ -12,8 +12,6 @@ public class TroopRank : MonoBehaviour {
 	PlayerRank playerRank;
 	BoardSetUp boardSetUp;
 
-	GameObject territories;
-
 	int numberOfPlayers;
 	bool activeCatagory;
 
