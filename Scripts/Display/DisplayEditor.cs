@@ -196,13 +196,13 @@ public class DisplayEditor : MonoBehaviour {
 
 	// dual box: row set up
 	void DefaultPosition(){
-		atkTextPos = new Vector3 (574, 20, 0);
+		atkTextPos = new Vector3 ((Screen.width*0.8f)/2f, Screen.height*0.06f, 0);
 		selectedCountryText.transform.position = atkTextPos;
 	}
 
 	// dual box: column set up
 	void PositionOne(Text textBox){
-		atkTextPos = new Vector3 (624, 40, 0);
+		atkTextPos = new Vector3 (Screen.width/ 2f, Screen.height * 0.8f, 0);
 		textBox.transform.position = atkTextPos;
 	}
 

@@ -12,7 +12,6 @@ public class ScrollInstructions : MonoBehaviour {
     public Button startButton;
     public InputField inputBar;
 
-    float headerWidth, headerHeight, headerPos, navWidth, navHeight, navPos, mainWidth, mainHeight, mainPos, fontRatio;
     bool gameStarted;
     string homePageText;
 
@@ -22,36 +21,10 @@ public class ScrollInstructions : MonoBehaviour {
 
     void Start() {
         gameStarted = false;
-        // set textbox sizes relative to the screen
-        headerWidth = Screen.width * 0.174f;
-        headerHeight = Screen.height * 0.046f;
-        navWidth = Screen.width * 0.350f;
-        navHeight = Screen.height * 0.169f;
-        mainWidth = Screen.width * 0.350f;
-        mainHeight = Screen.height * 0.492f;
-        // apply size changes
-        scrollHeader.GetComponent<RectTransform>().sizeDelta = new Vector2(headerWidth, headerHeight);
-        scrollNavigation.GetComponent<RectTransform>().sizeDelta = new Vector2(navWidth, navHeight);
-        scrollMainBody.GetComponent<RectTransform>().sizeDelta = new Vector2(mainWidth, mainHeight);
-
-        // set textbox position relative to the screen
-        headerPos = headerHeight * 7.33f;
-        navPos = navHeight * 1.36f;
-        mainPos = -mainHeight * 0.246f;
-        // apply position changes
-        scrollHeader.transform.localPosition = new Vector3(0, headerPos, 0);
-        scrollNavigation.transform.localPosition = new Vector3(0, navPos, 0);
-        scrollMainBody.transform.localPosition = new Vector3(0, mainPos,0);
-
-        fontRatio = (Screen.height) / 652f;
-        scrollHeader.fontSize= (int)(16f * fontRatio);
-        scrollNavigation.fontSize = (int)(12f * fontRatio);
-        scrollMainBody.fontSize = (int)(12f * fontRatio);
-
         // header text
         scrollHeader.text = "<b>RISK</b> - Game Instructions";
         // navigation text
-        scrollNavigation.text = "<b>Page navigation</b>\n" +
+        scrollNavigation.text = "Page navigation\n" +
             "Home Page: 'H'\n" +
             "Opening Phase: 'O'\n" +
             "Setup Phase: 'S'\n" +
@@ -60,16 +33,16 @@ public class ScrollInstructions : MonoBehaviour {
             "Game Interface: 'I'\n" +
             "Start Game: 'Enter'";
         //  default main body text
-        homePageText = "<b>Aim: Take control of the whole map</b>\n" +
+        homePageText = "Aim: Take control of the whole map\n" +
             "\n" +
-            "The game starts with an Opening Phase('O') after which, Player 1 (that's you) will begin their turn\n" +
+            "The game starts with an Opening Phase('O') where the game board is setup. After the Player (that's you) is allocated soldiers and will begin their turn.\n" +
             "\n" +
             "Every player turn is made up of 3 phases:\n" +
             "Setup Phase ('S') - Placing troops on your countries\n" +
             "Attack Phase ('A') - Attacking enemies\n" +
             "Movement Phase ('M') - Moving troops\n" +
             "\n" +
-            "Game Interface ('I') - All the different  buttons and information displayed on the screen.\n" +
+            "Game Interface ('I') - All the different  buttons and information displayed on the screen\n" +
             "\n" +
             "Press the (letters in the brackets) to find out more, recommended\n" +
             "\n" +
@@ -81,6 +54,7 @@ public class ScrollInstructions : MonoBehaviour {
     }
 
     private void Update() {
+
         // home page
         if (Input.GetKeyDown(KeyCode.H)) {
             scrollMainBody.text = homePageText;
@@ -88,11 +62,11 @@ public class ScrollInstructions : MonoBehaviour {
 
         // opening phase
         if (Input.GetKeyDown(KeyCode.O)) {
-            scrollMainBody.text = "<b>OPENING PHASE</b>\n" +
+            scrollMainBody.text = "OPENING PHASE\n" +
                 "\n" +
-                "To setup the game board each player is allocated a number of armies. Player 1 gets to place one army on a country under their control\n" +
+                "To setup the game board each player is allocated a number of armies. Player 1 gets to place one army on a country under their control.\n" +
                 "\n" +
-                "To place an army select that country you wish to place it on. Then player 2 does the same, then 3 etc. and back to player 1\n" +
+                "To place an army select that country you wish to place it on. Then player 2 does the same, then 3 etc. and back to player 1.\n" +
                 "This process repeats untill you have no more armies to place\n" +
                 "\n" +
                 "The number of armies each player has left to place is shown on the right side of the screen\n" +
@@ -103,7 +77,7 @@ public class ScrollInstructions : MonoBehaviour {
         }
         // setup phase
         if (Input.GetKeyDown(KeyCode.S)) {
-            scrollMainBody.text = "<b>SETUP PHASE</b>\n" +
+            scrollMainBody.text = "SETUP PHASE\n" +
                 "\n" +
                 "At the start of your turn you will receive bonus troops. By selecting a country under your control and using the '+/-' buttons you can place them on any of your contries.\n" +
                 "\n" +
@@ -125,24 +99,24 @@ public class ScrollInstructions : MonoBehaviour {
         }
         // attack phase
         if (Input.GetKeyDown(KeyCode.A)) {
-            scrollMainBody.text = "<b>ATTACK PHASE</b>\n" +
+            scrollMainBody.text = "ATTACK PHASE\n" +
                 "\n" +
                 "If you have more than 2 armies on a country you can attack any neighbouring enemy country\n" +
                 "\n" +
-                "To begin an attack select the country you wish to attack with and select the 'Attack' button, then select the country you'd like to attack\n" +
-                "To attack them press the 'Battle' button (this can be pressed repeatedly until either you or the enemy run out of troops)\n" +
+                "To begin an attack select the country you wish to attack with and select the 'Attack' button, then select the country you'd like to attack.\n" +
+                "To attack them press the 'Battle' button (this can be pressed repeatedly until either you or the enemy run out of troops).\n" +
                 "\n" +
                 "Press 'M' to move onto the Movement Phase instructions";
         }
         // movement phase
         if (Input.GetKeyDown(KeyCode.M)) {
-            scrollMainBody.text = "<b>MOVEMENT PHASE</b>\n" +
+            scrollMainBody.text = "MOVEMENT PHASE\n" +
                 "\n" +
-                "You can move one set of troops across your connected territories i.e. if there is a path of countries connected under your control you can move any number of troops between them\n" +
-                "This can only be done once per turn.\n" +
+                "You can move one set of troops across your connected territories i.e. if there is a path of countries connected under your control you can move any number of troops between them.\n" +
+                "This can only be done once per turn\n" +
                 "\n" +
-                "To move troops select the country you want to move troops from and select the move button, this is your 'from country'\n" +
-                "Following this select the country you want to move your troops to and select the move button to confirm the selection, this is your 'to country'\n" +
+                "To move troops select the country you want to move troops from and select the move button, this is your 'from country'.\n" +
+                "Following this select the country you want to move your troops to and select the move button to confirm the selection, this is your 'to country'.\n" +
                 "\n" +
                 "Using the +/- buttons you can move your troops in any direction\n" +
                 "\n" +

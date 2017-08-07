@@ -240,7 +240,6 @@ public class ButtonColour : MonoBehaviour {
 	// attack button - player can press attack to deselect attacker
 	void BattleDeselectAttacker(){
 		attackText.text = "Deselect\nAttacker";
-		attackText.fontSize = 10;
 		attackColour.color = permaActiveGrey;
 		UnlockButton ("attack");
 	}
@@ -248,7 +247,6 @@ public class ButtonColour : MonoBehaviour {
 	// attack button - player can press attack to re-select attacker
 	void BattleReselectAttacker(){
 		attackText.text = "Attack";
-		attackText.fontSize = 14;
 		attackColour.color = activeGreen;
 		battleColour.color = unactiveGrey;
 		UnlockButton ("attack");

@@ -21,14 +21,19 @@ public class PlayerRank : MonoBehaviour {
 	GameObject cell;
 	GameObject scriptHolder;
 
-	Text textBox, cellText, playerHeader;
+	Text textBox, cellText;
 
-	Color teamColour;
+    TextGenerator textBoxGen;
+    TextGenerationSettings textSetting;
+    float boxWidth, boxHeight;
+
+
+    Color teamColour;
 
 	Vector3 cellPos, adjustXPos, adjustYPos;
 
 	public bool terrCountCat, troopCountCat, solBonusCat;
-	int NumbOfPlayers, playerNumber;
+	int playerNumber, numbOfPlayers;
 	string player;
 
 	void Awake () {
@@ -40,52 +45,55 @@ public class PlayerRank : MonoBehaviour {
 		soldierBonus = this.GetComponent<SoldierBonus> ();
 
 		scriptHolder = GameObject.FindGameObjectWithTag ("ScriptHolder");
-		teamChecker = scriptHolder.GetComponent<TeamChecker> ();
-		playerTurn = scriptHolder.GetComponent<PlayerTurn> ();
+		teamChecker = scriptHolder.GetComponent<TeamChecker>();
+        playerTurn = scriptHolder.GetComponent<PlayerTurn>();
 	}
 
-	// build the player stats table (incl headers)
-	public void BuildRankTable(int numberOfPlayers){
-		NumbOfPlayers = numberOfPlayers;
-		rankTable = new List<Text[]> ();
+    private void Start() {
+        textBoxGen = new TextGenerator();
+    }
+
+    // build the player stats table
+    public void BuildRankTable(int numberOfPlayers){
+        numbOfPlayers = numberOfPlayers;
+        rankTable = new List<Text[]>();
 		// build a 2 x numberOfPlayers table of text boxes (cells)
-		for (int y = 0; y <= NumbOfPlayers; y++) {
-			rankTable.Add (new Text[]{ CreateCell (), CreateCell () });
+		for (int y = 0; y < numberOfPlayers; y++) {
+            rankTable.Add(new Text[] { CreateCell(), CreateCell() });
 		}
 
-		// set x and y distances between cells
-		cellPos = rankPlacer.transform.position;
-		adjustXPos = new Vector3 (80, 0, 0);
-		adjustYPos = new Vector3 (0, 22, 0);
+        // calc textbox widths
+        textSetting = cellText.GetGenerationSettings(cellText.rectTransform.rect.size);
+        boxWidth = textBoxGen.GetPreferredWidth(cellText.text, textSetting);
+        boxHeight = textBoxGen.GetPreferredHeight(cellText.text, textSetting);
+        // set x and y distances between cells
+        cellPos = rankPlacer.transform.position;
+		adjustXPos = new Vector3 (boxWidth*2f, 0, 0);
+		adjustYPos = new Vector3 (0, boxHeight*1.6f, 0);
 
-		// set cell positions
-		for (int i = 0; i < rankTable.Count; i++) {
+        // set cell positions
+        for (int i = 0; i < rankTable.Count; i++) {
 			// set column 1 position
 			cellPos -= adjustXPos;
 			cellPos -= adjustYPos;
-			textBox = rankTable [i] [0];
+            textBox = rankTable[i][0];
 			textBox.transform.SetPositionAndRotation (cellPos,Quaternion.identity);
 			// set column 2 position
 			cellPos += adjustXPos;
-			textBox = rankTable [i] [1];
+            textBox = rankTable[i][1];
 			textBox.transform.SetPositionAndRotation (cellPos, Quaternion.identity);
 		}
-		// set headers
-		playerHeader = rankTable[0][0];
-		playerHeader.text = "Player";
-		playerHeader.color = Color.black;
 
-		Destroy (rankTable [0] [1].gameObject);
 	}
 
 	// rank by territroy count
 	public void RankedTerrCount(){
 		// build table
-		for (int i = 1; i <= NumbOfPlayers; i++) {
-			playerNumber = territoryRank.TerrCountPlayerRanks [i - 1];
+		for (int i = 0; i < numbOfPlayers; i++) {
+			playerNumber = territoryRank.TerrCountPlayerRanks [i];
 			player = "Player" + playerNumber;
-			// set player number, values and colours
-			rankTable [i] [1].text = territoryCount.landCounter [player].ToString();
+            // set player number, values and colours
+            rankTable[i][1].text = territoryCount.landCounter[player].ToString();
 			RankedTableProperties (i);
 		}
 	}
@@ -93,11 +101,11 @@ public class PlayerRank : MonoBehaviour {
 	// rank by troop count
 	public void RankedTroopCount(){
 		// build table
-		for (int j = 1; j <= NumbOfPlayers; j++) {
-			playerNumber = troopRank.TroopCountPlayerRanks [j - 1];
+		for (int j = 0; j < numbOfPlayers; j++) {
+			playerNumber = troopRank.TroopCountPlayerRanks [j];
 			player = "Player" + playerNumber;
-			// set player number, value and colour
-			rankTable [j] [1].text = troopCount.troopCounter [player].ToString ();
+            // set player number, value and colour
+            rankTable[j][1].text = troopCount.troopCounter[player].ToString();
 			RankedTableProperties (j);
 		}
 	}
@@ -105,38 +113,42 @@ public class PlayerRank : MonoBehaviour {
 	// rank by soldier bonus
 	public void RankedSoldierBonus(){
 		// build table
-		for (int k = 1; k <= NumbOfPlayers; k++) {
-			playerNumber = soldierBonusRank.SolBonusPlayerRanks [k - 1];
+		for (int k = 0; k < numbOfPlayers; k++) {
+			playerNumber = soldierBonusRank.SolBonusPlayerRanks [k];
 			player = "Player" + playerNumber;
-			// set player number, values and colours
-			rankTable [k] [1].text = soldierBonus.soldierIncome [player].ToString ();
+            // set player number, values and colours
+            rankTable[k][1].text = soldierBonus.soldierIncome[player].ToString();
 			RankedTableProperties (k);
 		}
 	}
 
 	// build various common table properies in function
 	void RankedTableProperties(int index){
-		// rank player number
-		rankTable [index] [0].text = player;
+        // rank player number
+        rankTable[index][0].text = DisplayPlayers(playerNumber);
 		// set rank colour
 		teamColour = teamChecker.GetColour (playerNumber);
 		// reduce visability of other player values
 		if (playerTurn.CurrentPlayer () != playerNumber)
 			teamColour.a = 0.4f;
-		rankTable [index] [0].color = teamColour;
-		rankTable [index] [1].color = teamColour;
+        rankTable[index][0].color = teamColour;
+        rankTable[index][1].color = teamColour;
 	}
 
 	// create a single cell
 	public Text CreateCell(){
 		cell = GameObject.Instantiate (Resources.Load ("Text Box"), rankPlacer.transform) as GameObject;
-		// set cell dimentions
-		RectTransform cellDimentions = cell.GetComponent<RectTransform> ();
-		cellDimentions.sizeDelta = new Vector2 (50, 20);
-
 		cellText = cell.GetComponent<Text> ();
 		return cellText;
 	}
+
+    // display enemy players
+    public string DisplayPlayers(int playerNo ) {
+        if (playerNo == 1)
+            return "Player";
+        else
+            return "Enemy Player " + (playerNo - 1);
+    }
 
 
 }

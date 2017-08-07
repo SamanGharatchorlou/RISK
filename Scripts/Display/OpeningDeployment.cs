@@ -34,25 +34,26 @@ public class OpeningDeployment : MonoBehaviour {
 		categoryButton.text = "Soldiers Left";
 		categoryButton.color = Color.black;
 		// display the number of soldiers left to deploy
-		for (int i = 1; i <= numberOfPlayers; i++) {
-			deploymentTable [i] [0].text = "Player" + i;
-			soldiersLeft = allocateSoldiers.soldierBank [i - 1].ToString ();
-			deploymentTable [i] [1].text = soldiersLeft;
+		for (int i = 0; i < numberOfPlayers; i++) {
+            deploymentTable[i][0].text = playerRank.DisplayPlayers(i + 1);
+            soldiersLeft = allocateSoldiers.soldierBank[i].ToString();
+            deploymentTable[i][1].text = soldiersLeft;
 		}
-		// set player 1 colour
-		deploymentTable [1] [0].color = teamChecker.GetColour (1);
-		deploymentTable [1] [1].color = teamChecker.GetColour (1);
+        // set player 1 colour
+        deploymentTable[0][0].color = teamChecker.GetColour(1);
+        deploymentTable[0][1].color = teamChecker.GetColour(1);
 	}
 
 	// update the soldier deployment table
 	public void UpdateDeploymentTable(int currentPlayer, int soldiers){
-		// update number of troops left to deploy
+        // update number of troops left to deploy
 		soldiersLeft = soldiers.ToString ();
-		deploymentTable [currentPlayer] [1].text = soldiersLeft;
+        deploymentTable[currentPlayer - 1][1].text = soldiersLeft;
 		// update display colour of player placing troops
 		ResetColour();
-		deploymentTable [NextPlayer(currentPlayer)] [0].color = teamChecker.GetColour (NextPlayer(currentPlayer));
-		deploymentTable [NextPlayer(currentPlayer)] [1].color = teamChecker.GetColour (NextPlayer(currentPlayer));
+        // deployment table takes player index, team checker takes player number
+        deploymentTable[NextPlayer(currentPlayer) - 1][0].color = teamChecker.GetColour(NextPlayer(currentPlayer));
+        deploymentTable[NextPlayer(currentPlayer) - 1][1].color = teamChecker.GetColour(NextPlayer(currentPlayer));
 
 	}
 
@@ -66,9 +67,9 @@ public class OpeningDeployment : MonoBehaviour {
 
 	// resets the colour of a row
 	public void ResetColour(){
-		for (int i = 1; i <= boardSetUp.numberOfPlayers; i++) {
-			deploymentTable [i] [0].color = teamChecker.GetColour (6);
-			deploymentTable [i] [1].color = teamChecker.GetColour (6);
+		for (int i = 0; i < boardSetUp.numberOfPlayers; i++) {
+            deploymentTable[i][0].color = teamChecker.GetColour(6);
+            deploymentTable[i][1].color = teamChecker.GetColour(6);
 		}
 	}
 
