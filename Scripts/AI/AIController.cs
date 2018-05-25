@@ -30,21 +30,18 @@ public class AIController : MonoBehaviour {
 	void ActivateAIPlayer(){
 		if (!phases.openingPhase) {
 			// setup phase
-			//setupPhase.PlaceTroops ();
-			/*
+			setupPhase.PlaceTroops ();
 			phases.EndPhase ();
+			
 			// attacking phase
 			attackPhase.AIAttackCountry ();
 			phases.EndPhase ();
+			
 			// movement phase
 			movementPhase.AIMoveSoldiers ();
 			if(playerTurn.CurrentPlayer() != 1)
-				phases.EndPhase();
-				*/
+				phases.EndPhase();				
 		}
 	}
-
-
-
-	//TODO: add winning mechanic
+	
 }
