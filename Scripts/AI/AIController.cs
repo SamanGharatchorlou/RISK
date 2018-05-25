@@ -37,14 +37,17 @@ public class AIController : MonoBehaviour {
 			// attacking phase
 			attackPhase.AIAttackCountry ();
 			phases.EndPhase ();
-
+			
+			// attacking phase
+			attackPhase.AIAttackCountry ();
+			phases.EndPhase ();
+			
 			// movement phase
 			movementPhase.AIMoveSoldiers ();
 
 			if(playerTurn.CurrentPlayer() != 1)
-				phases.EndPhase();
-				
+				phases.EndPhase();				
 		}
 	}
-    
+	
 }
