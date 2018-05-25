@@ -22,29 +22,29 @@ public class AIController : MonoBehaviour {
 
 	// to be run after every turn to check if AI player turn
 	public void CheckPlayer(){
-		// all but player 1
+
 		if(playerTurn.CurrentPlayer() != 1)
 			ActivateAIPlayer();
 	}
 		
 	void ActivateAIPlayer(){
 		if (!phases.openingPhase) {
+
 			// setup phase
-			//setupPhase.PlaceTroops ();
-			/*
+			setupPhase.PlaceTroops ();
 			phases.EndPhase ();
+
 			// attacking phase
 			attackPhase.AIAttackCountry ();
 			phases.EndPhase ();
+
 			// movement phase
 			movementPhase.AIMoveSoldiers ();
+
 			if(playerTurn.CurrentPlayer() != 1)
 				phases.EndPhase();
-				*/
+				
 		}
 	}
-
-
-
-	//TODO: add winning mechanic
+    
 }

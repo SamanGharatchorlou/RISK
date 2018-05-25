@@ -53,6 +53,7 @@ public class ButtonColour : MonoBehaviour {
 		incorrectRed = new Color (0.78f, 0.3f, 0.1f);
 		unactiveGrey = new Color (0.7f, 0.7f, 0.7f);
 		permaActiveGrey = new Color (0.95f, 0.95f, 0.95f);
+
 		// deactivate all button colours except change category
 		DeactiveateAll ();
 		categoryColour.color = permaActiveGrey;
@@ -77,6 +78,7 @@ public class ButtonColour : MonoBehaviour {
 	// locks a given button
 	//plusBtn, minusBtn, attackBtn, battleBtn, moveBtn, turnBtn, catergoryBtn, startBtn
 	public void LockButton(string button){
+
         switch (button) {
             case "category":
                 catergoryBtn.interactable = false;
@@ -126,6 +128,7 @@ public class ButtonColour : MonoBehaviour {
 
 	// unlocks a given button
 	public void UnlockButton(string button){
+
         switch (button) {
             case "category":
                 catergoryBtn.interactable = true;
@@ -164,30 +167,38 @@ public class ButtonColour : MonoBehaviour {
 
 	// +/- buttons - if owned territory is selected - Country Selector
 	public void SetupPlusMinusColour(){
+
 		if (phases.setupPhase) {
 			selectedCountry = GameObject.FindGameObjectWithTag ("SelectedCountry");
+
 			// if selected territory is owned and various troop count conditions are met
 			if (teamChecker.UnderControl (selectedCountry)) {
+
 				// + button
 				if (deploySoldiers.soldiersLeft > 0) {
 					plusColour.color = activeGreen;
 					UnlockButton ("plus");
+
 				} else {
 					plusColour.color = unactiveGrey;
 					LockButton ("plus");
 				}
+
 				// - button
 				foreach (Transform soldier in selectedCountry.transform) {
+
 					if (soldier.gameObject.tag == "DeployedSoldier") {
+
 						minusColour.color = activeGreen;
 						UnlockButton ("minus");
 						break;
+
 					} else {
 						minusColour.color = unactiveGrey;
 						LockButton ("minus");
 					}
-					
 				}
+
 			} else {
 				// if selected territory is not owned
 				plusColour.color = unactiveGrey;
@@ -200,9 +211,11 @@ public class ButtonColour : MonoBehaviour {
 
 	// end turn button - if all soldiers have been deployed - Deploy Soldiers
 	public void SetupTurnColour(int soldiersLeft){
+
 		if (soldiersLeft == 1) {
 			turnColour.color = permaActiveGrey;
 			UnlockButton ("turn");
+
 		} else {
 			turnColour.color = unactiveGrey;
 			LockButton ("turn");
@@ -220,16 +233,20 @@ public class ButtonColour : MonoBehaviour {
 
     // attack button - if owned territory is selected - countrySelector
     public void BattleAttackColour(bool selectingDefender){
+
 		selectedCountry = GameObject.FindGameObjectWithTag ("SelectedCountry");
+
 		if (selectedCountry != null)
 			armySize = countryManagement.GetArmySize (selectedCountry.name);
 		
 		// if defender is selected lock attack button & adjust text accordingly
 		if (selectingDefender)
 			BattleDeselectAttacker ();
+
 		// if attacker is selected with army > 1 unlock attack button
 		else if (teamChecker.UnderControl (selectedCountry) & armySize > 1)
 			BattleReselectAttacker ();
+
 		else {
 			//if selected territory is not owned
 			attackColour.color = incorrectRed;
@@ -255,14 +272,17 @@ public class ButtonColour : MonoBehaviour {
 
 	// battle button - if enemy territory and attack button have been selected. Deactivates attack button - targetCountry & takeControl
 	public void BattleBattleColour(GameObject attackingCountry, GameObject defendingCountry){
+
 		if (attackingCountry == null || defendingCountry == null) {
 			battleColour.color = unactiveGrey;
 			LockButton ("battle");
 		}
+
 		// if selected territory is not owned and a neighbour
 		else if (!teamChecker.UnderControl (defendingCountry) & attack.CanAttack (attackingCountry, defendingCountry)) {
 			battleColour.color = activeGreen;
 			UnlockButton ("battle");
+
 		} else {
 			battleColour.color = unactiveGrey;
 			LockButton ("battle");
@@ -272,12 +292,15 @@ public class ButtonColour : MonoBehaviour {
 
 	// +/- buttons - if claim is called and stays active unitl attack has been selected again - targetCountry & takeControl
 	public void BattlePlusMinusColour(bool selectingDefender){
+
 		selectedCountry = GameObject.FindGameObjectWithTag ("SelectedCountry");
+
 		if (selectingDefender) {
 			plusColour.color = unactiveGrey;
 			minusColour.color = unactiveGrey;
 			LockButton ("plus");
 			LockButton ("minus");
+
 		} else {
 			plusColour.color = unactiveGrey;
 			minusColour.color = activeGreen;
@@ -288,26 +311,27 @@ public class ButtonColour : MonoBehaviour {
 
 	// +/- buttons -  once takeControl has been called - SoldierTransfer
 	public void BattlePlusMinusColour2(GameObject fromCountry, GameObject toCountry, int attackerNumbers){
+
 		// set + conditions
 		if (countryManagement.GetArmySize (fromCountry.name) > 1) {
 			plusColour.color = activeGreen;
 			UnlockButton ("plus");
+
 		} else {
 			plusColour.color = unactiveGrey;
 			LockButton ("plus");
 		}
+
 		// set - conditions
 		if (countryManagement.GetArmySize (toCountry.name) > attackerNumbers) {
 			minusColour.color = activeGreen;
 			UnlockButton ("minus");
+
 		} else {
 			minusColour.color = unactiveGrey;
 			LockButton ("minus");
 		}
 	}
-
-
-
 
     // ------------------------- MOVEMENT PHASE  -------------------------
 
@@ -320,13 +344,16 @@ public class ButtonColour : MonoBehaviour {
 
 	// from country selection process
 	public void MovementSelectFromCountry(GameObject fromCountry){
+
 		// correct fromCountry selected
 		if (teamChecker.UnderControl (fromCountry) & countryManagement.GetArmySize (fromCountry.name) > 1) {
+
 			moveText.text = "Select as\n'From Country'";
 			moveColour.color = activeGreen;
 			UnlockButton ("move");
 			gameInstructions.SelectFromMoveButton (moveText.text);
 		} 
+
 		// incorrect fromCountry selected
 		else {
 			moveColour.color = incorrectRed;
@@ -336,6 +363,7 @@ public class ButtonColour : MonoBehaviour {
 
 	// to country selection process
 	public void MovementSelectToCountry(GameObject toCountry, string selection){
+
 		// correct toCountry selected
 		if (selection == "correct") {
 			moveText.text = "Select as\n'To Country'";
@@ -343,6 +371,7 @@ public class ButtonColour : MonoBehaviour {
 			gameInstructions.SelectToMoveButton (moveText.text);
 			UnlockButton ("move");
 		}
+
 		// incorrect toCountry selected
 		else {
 			moveColour.color = incorrectRed;
@@ -372,18 +401,22 @@ public class ButtonColour : MonoBehaviour {
 
 	// activates/deactivates +/- buttons
 	public void MovementPlusMinusColour(GameObject fromCountry, GameObject toCountry){
+
 		// set + conditions
 		if (countryManagement.GetArmySize (fromCountry.name) > 1) {
 			plusColour.color = activeGreen;
 			UnlockButton ("plus");
+
 		} else {
 			plusColour.color = unactiveGrey;
 			LockButton ("plus");
 		}
+
 		// set - conditions
 		if (countryManagement.GetArmySize (toCountry.name) > 1) {
 			minusColour.color = activeGreen;
 			UnlockButton ("minus");
+
 		} else {
 			minusColour.color = unactiveGrey;
 			LockButton ("minus");

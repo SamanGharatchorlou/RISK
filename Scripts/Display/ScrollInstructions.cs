@@ -20,9 +20,12 @@ public class ScrollInstructions : MonoBehaviour {
     }
 
     void Start() {
+
         gameStarted = false;
+
         // header text
         scrollHeader.text = "<b>RISK</b> - Game Instructions";
+
         // navigation text
         scrollNavigation.text = "Page navigation\n" +
             "Home Page: 'H'\n" +
@@ -32,6 +35,7 @@ public class ScrollInstructions : MonoBehaviour {
             "Movement Phase: 'M'\n" +
             "Game Interface: 'I'\n" +
             "Start Game: 'Enter'";
+
         //  default main body text
         homePageText = "Aim: Take control of the whole map\n" +
             "\n" +
@@ -56,12 +60,12 @@ public class ScrollInstructions : MonoBehaviour {
     private void Update() {
 
         // home page
-        if (Input.GetKeyDown(KeyCode.H)) {
+        if (Input.GetKeyDown(KeyCode.H))
             scrollMainBody.text = homePageText;
-        }
 
         // opening phase
         if (Input.GetKeyDown(KeyCode.O)) {
+
             scrollMainBody.text = "OPENING PHASE\n" +
                 "\n" +
                 "To setup the game board each player is allocated a number of armies. Player 1 gets to place one army on a country under their control.\n" +
@@ -75,6 +79,7 @@ public class ScrollInstructions : MonoBehaviour {
                 "\n" +
                 "Press 'S' to move onto the Setup Phase instructions";
         }
+
         // setup phase
         if (Input.GetKeyDown(KeyCode.S)) {
             scrollMainBody.text = "SETUP PHASE\n" +
@@ -97,6 +102,7 @@ public class ScrollInstructions : MonoBehaviour {
                 "\n" +
                 "Press 'A' to move onto the Attack Phase instructions";
         }
+
         // attack phase
         if (Input.GetKeyDown(KeyCode.A)) {
             scrollMainBody.text = "ATTACK PHASE\n" +
@@ -108,6 +114,7 @@ public class ScrollInstructions : MonoBehaviour {
                 "\n" +
                 "Press 'M' to move onto the Movement Phase instructions";
         }
+
         // movement phase
         if (Input.GetKeyDown(KeyCode.M)) {
             scrollMainBody.text = "MOVEMENT PHASE\n" +
@@ -122,6 +129,7 @@ public class ScrollInstructions : MonoBehaviour {
                 "\n" +
                 "Press 'I' to move onto the Game Interface explanations";
         }
+
         // buttons
         if (Input.GetKeyDown(KeyCode.I)) {
             scrollMainBody.text = "There's lots of differnt things on the screen here's what it all means\n" +
@@ -144,6 +152,7 @@ public class ScrollInstructions : MonoBehaviour {
         }
 
         if (Input.GetKeyDown("return")) {
+
             // only activates once
             if (!gameStarted) {
                 startButton.gameObject.SetActive(true);

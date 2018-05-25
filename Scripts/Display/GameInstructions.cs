@@ -47,6 +47,7 @@ public class GameInstructions : MonoBehaviour {
 
 	// shows battle outcome and keep battling/move onto movement phase
 	public void BattleOutcome(int deadAttackers, int deadDefenders){
+
 		instructionBox.text =
 		"Either press battle again to continue fighting.\n" +
 		"Select another country to attack with.\n" +
@@ -55,6 +56,7 @@ public class GameInstructions : MonoBehaviour {
 
 	// claimed country
 	public void BattleClaim(GameObject newCountry){
+
 		instructionBox.text = "You now have control of " + newCountry.name + 
 		" Select another country to attack with or\n" +
 		"press 'End Battle Phase'";
@@ -109,8 +111,10 @@ public class GameInstructions : MonoBehaviour {
 	}
 
 	public void CannotAttack(GameObject attacker, GameObject defender){
+
 		if (teamChecker.UnderControl (defender))
 			instructionBox.text = "You cant attack yourself...";
+
 		else
 			instructionBox.text = attacker.name + " and " + defender.name + " aren't neighbours";
 	}

@@ -45,67 +45,87 @@ public class ArmyManagement : MonoBehaviour {
 		buttonColour = GUI.GetComponent<ButtonColour> ();
 	}
 
-	//TODO: move all troops to a country then pressing minus move them all back, once back to the original position the + button becomes unactive grey and locked.
-		
 	// Add a soldier to the selected country - setup phase only
 	public void Add(){
+
 		if (phases.setupPhase) {
+
 			audioFadeOut.MoreTroopsAudio ();
 			country = GameObject.FindGameObjectWithTag ("SelectedCountry");
+
 			if (teamChecker.UnderControl (country) & deploySoldiers.CanAddSoldier()) {
+
 				addSoldier = country.GetComponent<AddSoldier> ();
 				addSoldier.PlaceSoldier ();
 				UpdateNumbers(country,1);
 			}
+
 			buttonColour.SetupPlusMinusColour ();
 		}
 	}
 
 	// Remove a soldier from the selected country - setup phase only
 	public void Remove(){
+
 		if (phases.setupPhase) {
 			click.Play ();
 			country = GameObject.FindGameObjectWithTag ("SelectedCountry");
+
 			// Creates a list of the country's soldiers
 			soldiers = new List<GameObject> ();
 
 			if (teamChecker.UnderControl (country) & deploySoldiers.CanRemoveSoldier()) {
+
 				foreach (Transform child in country.transform) {
+
 					if (child.name == "Soldier(Clone)")
 						soldiers.Add (child.gameObject);
 				}
+
 				// Find and delete the last soldier in the list
 				if (soldiers.Count > 1) {
+
 					soldierToDelete = soldiers [soldiers.Count - 1];
+
 					if (soldierToDelete.tag == "DeployedSoldier") {
+
 						DestroyImmediate (soldierToDelete);
 						UpdateNumbers (country, -1);
 						troopCount.UpdateTroopBankV2 (playerTurn.CurrentPlayer (), -1);
 					}
 				}
 			}
+
 			buttonColour.SetupPlusMinusColour ();
 		}
 	}
 
 	// Removes the dead after a battle (same as Remove() function)
 	public void RemoveDead(string countryTag, int numberDead){
+
 		// Creates a list of the country's soldiers
 		country = GameObject.FindGameObjectWithTag(countryTag);
 		soldiers = new List<GameObject>();
+
 		foreach (Transform child in country.transform) {
+
 			if (child.name == "Soldier(Clone)")
 				soldiers.Add (child.gameObject);
 		}
+
 		// Find and delete the last soldier in the list
 		for (int i = 1; i <= numberDead; i++) {
+
 				soldierToDelete = soldiers [soldiers.Count - i];
 				if (soldierToDelete != null)
+
 				// DesIm used for defaultTrans in SoldierTrans to work after Claim in TakeControl
 				DestroyImmediate (soldierToDelete);
 		}
+
 		if (countryTag == "AttackingCountry")
 			rmDeadPlayerNum = attack.attackingPlayer;
+
 		else if (countryTag == "DefendingCountry")
 			rmDeadPlayerNum = attack.defendingPlayer;
 		
@@ -116,10 +136,12 @@ public class ArmyManagement : MonoBehaviour {
 
 	// Update various stats
 	public void UpdateNumbers(GameObject country, int ChangeArmyBy){
+
 		// update numbers
 		deploySoldiers.soldiersLeft = deploySoldiers.soldiersLeft - ChangeArmyBy;
 		receiveBonus.SoldierBonusDisplay(deploySoldiers.soldiersLeft);
 		countryManagement.ChangeArmySize (country, ChangeArmyBy);
+
 		// display number of soldiers added during turn
 		displayEditor.SetupDeploySoldier (country);
 	}

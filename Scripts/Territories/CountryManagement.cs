@@ -5,6 +5,7 @@ using UnityEngine;
 public class CountryManagement : MonoBehaviour {
 
 	// dictionary of all 42 territories
+    // this will be updated with the number of troops each country holds during the game
 	Dictionary<string,int> armySizes = new Dictionary<string, int> ();
 
 	string countryName ;

@@ -31,18 +31,20 @@ public class CountrySelector : MonoBehaviour {
 		GUI = GameObject.FindGameObjectWithTag ("GUI");
 		displayEditor = GUI.GetComponent<DisplayEditor> ();
 		buttonColour = GUI.GetComponent<ButtonColour> ();
-		}
+	}
 
 	//Remove presvious country selected and add tag to new country selection
 	void OnMouseDown(){
+
 		audioFadeOut.Click ();
-		//TODO: adjust this to take the number human players into account
 		// cannot select countries during AI turn
+
 		if (playerTurn.CurrentPlayer () != 1)
 			return;
 		
 		// removes tag from previously selected country
 		previousCountry = GameObject.FindGameObjectWithTag ("SelectedCountry");
+
 		if (previousCountry != null)
 			previousCountry.gameObject.tag = "Untagged";
 
@@ -52,6 +54,7 @@ public class CountrySelector : MonoBehaviour {
 
 		// activates and deactivates button colours
 		buttonColour.SetupPlusMinusColour ();
+
 		if (phases.battlePhase)
 			buttonColour.BattleAttackColour (targetCountry.selectingDefender);
 
@@ -63,7 +66,9 @@ public class CountrySelector : MonoBehaviour {
 
 		// movement phase mechanics
 		if (phases.movementPhase) {
+
 			buttonColour.MovementSelectFromCountry(country);
+
 			// selects countries to move troops between
 			if(armyMovement.movementSelected)
 				armyMovement.MovementCountries (country);

@@ -30,10 +30,13 @@ public class DeploySoldiers : MonoBehaviour {
 		
 	// sets up the bonus soldiers a player is due to receive
 	public void BonusStore(){
+
 		// get their due soldier bonus
 		bonusSoldierCount = soldierBonus.soldierIncome["Player" + playerTurn.CurrentPlayer ()];
+
 		// tracks the bonus due after +/- button use
 		soldiersLeft = bonusSoldierCount;
+
 		// set up bonus soldier text
 		if (phases.setupPhase)
 			receiveBonus.SoldierBonusDisplay (soldiersLeft);
@@ -41,18 +44,22 @@ public class DeploySoldiers : MonoBehaviour {
 
 	// checks if player can add a soldier onto the field from the bonus soldier bank
 	public bool CanAddSoldier(){
+
 		if (soldiersLeft > 0) {
 			buttonColour.SetupTurnColour (soldiersLeft);
 			return true;
+
 		} else
 			return false;
 	}
 
 	// checks if player can remove a soldier from the field into the bonus soldier bank
 	public bool CanRemoveSoldier(){
+
 		if (soldiersLeft < bonusSoldierCount) {
 			buttonColour.SetupTurnColour (soldiersLeft);
 			return true;
+
 		} else
 			return false;
 	}

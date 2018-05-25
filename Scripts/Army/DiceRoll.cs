@@ -41,12 +41,14 @@ public class DiceRoll : MonoBehaviour {
 
 		// Calculates how many dead attackers and defenders
 		for (int i = 1; i <= defenders & i<=attackers; i++) {
+
 			// breaks script if all attackers are dead
-			if (attackers == deadAttackers) {
+			if (attackers == deadAttackers)
 				break;
-			}
+
 			if (attackerValues [attackers - i] > defenderValues [defenders - i])
 				deadDefenders = deadDefenders + 1;
+
 			else
 				deadAttackers = deadAttackers + 1;
 		}

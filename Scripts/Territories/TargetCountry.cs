@@ -37,15 +37,19 @@ public class TargetCountry : MonoBehaviour {
 		
 	//Label target as the attacker and sets up SetDefender function - Attack button
 	void SetAttacker(){
+
 		// Remove previous attckers tag
 		previousCountry = GameObject.FindGameObjectWithTag ("AttackingCountry");
+
 		if (previousCountry != null)
 			previousCountry.gameObject.tag = "Untagged";
 
 		// Selected country becomes attacker
 		attackingCountry = GameObject.FindGameObjectWithTag ("SelectedCountry");
+
 		// Can only attack with countries owned
 		if (attackingCountry != null) {
+
 			if (!selectingDefender & !teamChecker.UnderControl (attackingCountry) || countryManagement.GetArmySize (attackingCountry.name) == 1)
 				return;
 		}
@@ -54,7 +58,8 @@ public class TargetCountry : MonoBehaviour {
 		if (attackingCountry == null & previousCountry != null) {
 			previousCountry.gameObject.tag = "AttackingCountry";
 			attackingCountry = previousCountry;
-		} // this part should run most of the time
+		} 
+        // this part should run most of the time
 		else if (attackingCountry != null) {
 			attackingCountry.gameObject.tag = "AttackingCountry";
 			displayEditor.AttackingTerritory (attackingCountry);
@@ -62,33 +67,43 @@ public class TargetCountry : MonoBehaviour {
 
 		// Allows SetDefender to be called as the following country selection in countrySelector
 		if (!selectingDefender) {
+
 			// runs here when 'attack' is selected
 			selectingDefender = true;
+
 			// change button colours
 			buttonColour.BattleAttackColour (selectingDefender);
+
 			// reomves +/- colour after 'attack' has been selected
 			buttonColour.BattlePlusMinusColour (selectingDefender);
+
 		} else {
+
 			// runs here when 'deselect attacker' is selected - reverts game back to pre attack state
 			selectingDefender = false;
+
 			// prevents error if attacker tries to attack itself
 			if (attackingCountry != null) {
 				attackingCountry.gameObject.tag = "SelectedCountry";
 				displayEditor.SelectedTerritory (attackingCountry);
 				buttonColour.BattleBattleColour (attackingCountry,defendingCountry);
+
 			} else {
 				defendingCountry.gameObject.tag = "SelectedCountry";
 				displayEditor.SelectedTerritory (defendingCountry);
 				buttonColour.BattleBattleColour (attackingCountry,defendingCountry);
 			}
+
 			buttonColour.BattleAttackColour (selectingDefender);
 		}
 	}
 		
 	// Labels target as the defender
 	public void SetDefender(){
+
 		// Remove previous defenders tag
 		previousCountry = GameObject.FindGameObjectWithTag ("DefendingCountry");
+
 		if (previousCountry != null)
 			previousCountry.gameObject.tag = "Untagged";
 
@@ -100,6 +115,7 @@ public class TargetCountry : MonoBehaviour {
 		if (!teamChecker.UnderControl (defendingCountry) & attack.CanAttack(attackingCountry,defendingCountry)) {
 			displayEditor.BattlingTerritories (attackingCountry, defendingCountry);
 			buttonColour.BattleBattleColour (attackingCountry,defendingCountry);
+
 		} else {
 			displayEditor.CannotAttack (attackingCountry,defendingCountry);
 			buttonColour.BattleBattleColour (attackingCountry,defendingCountry);

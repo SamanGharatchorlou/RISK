@@ -29,7 +29,9 @@ public class ChangeCatagory : MonoBehaviour {
 
 	// when code is run change catagories - Index 1 is the active category
 	public void RotateCategory(){
+
 		if (!phases.openingPhase) {
+
             // changes category 
             switch (categoryButton.text) {
                 case "Troop Count":
@@ -45,6 +47,7 @@ public class ChangeCatagory : MonoBehaviour {
                     playerRank.RankedTroopCount();
                     break;
             }
+
 			// allows the active category display to update - via other rank scripts
 			troopRank.UpdateTroopCountDisplay (categoryButton.text);
 			territoryRank.UpdateTerritoryRankDisplay (categoryButton.text);
