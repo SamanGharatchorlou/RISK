@@ -75,7 +75,6 @@ public class BoardSetUp : MonoBehaviour {
 			// removes all accidental country selections before game starts
 			ClearSelections();
             // locks start button after single use
-            //TODO: this doesnt work
             startButton.gameObject.SetActive(false);
             inputData.gameObject.SetActive(false);
 		}
