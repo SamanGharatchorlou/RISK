@@ -37,46 +37,37 @@ public class ContinentBonus : MonoBehaviour {
 	}
 		
 	public void BuildContBonus(int numberOfPlayers){
-
 		playerContBonus = new Dictionary<string,int> ();
-
 		// build initial dictionary
 		numbOfPlayers = numberOfPlayers;
-
 		for (int i = 1; i <= numbOfPlayers; i++)
 			playerContBonus.Add ("Player" + i, 0);
 	}
 
 	// Builds a dictionary of continents bonuses recevied
 	public void UpdateContBonus() {
-
 		// Reset continent bonuses before re-building the dictionary again
 		for (int i = 1; i <= numbOfPlayers; i++)
 			playerContBonus["Player" + i] = 0;
 
 		// Cycle through continents
 		foreach (Transform continentTrans in this.transform) {
-
 			// Cycle through each country in continent
 			// Initialise values - lastPlayer value is set to anything but 1 to 5
 			countryCounter = 0;
 			lastPlayer = -1;
-
 			foreach (Transform countryTrans in continentTrans) {
 				player = teamChecker.GetPlayer (countryTrans.gameObject);
-
 				// breaks loop if the current and previous country is not owned by the same player
 				if (player != lastPlayer & lastPlayer != -1)
 					break;
-
+                
 				lastPlayer = player;
 				countryCounter++;
 			}
-
 			// doesnt give continent bonus to players 1 & 2 on turn 1 first turn
 			if (playerTurn.turn == 1 & player < 3)
 				notFirstPlayer = false;
-
 			else
 				notFirstPlayer = true;
 			

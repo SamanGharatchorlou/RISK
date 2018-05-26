@@ -23,7 +23,7 @@ public class TeamChecker : MonoBehaviour {
 		playerTurn = scriptHolder.GetComponent<PlayerTurn> ();
 	}
 
-	// returns the player number of the "SelectedCountry"
+	// returns the player number of a country
 	public int GetPlayer(GameObject country) {
 		return ColourToPlayer (PlayerColour (country));
 	}
@@ -94,7 +94,7 @@ public class TeamChecker : MonoBehaviour {
 		return playerColour;
 	}
 
-	// checks if gameobject is under current player control
+	// checks if gameobject is under current player control #1
 	public bool UnderControl(GameObject item){
 		if (playerTurn.CurrentPlayer () == GetPlayer (item))
 			return true;
@@ -102,7 +102,7 @@ public class TeamChecker : MonoBehaviour {
 			return false;
 	}
 
-	// checks if gameobject is under current player control
+	// checks if gameobject is under current player control #2
 	public bool UnderControlName(string item){
 		GameObject someItem = GameObject.Find (item);
 		if (playerTurn.CurrentPlayer () == GetPlayer (someItem))

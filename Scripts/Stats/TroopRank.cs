@@ -27,21 +27,16 @@ public class TroopRank : MonoBehaviour {
 
 	// sorts players by troop count
 	public void ByTroopCount(){
-
 		numberOfPlayers = boardSetUp.numberOfPlayers;
 		// build a list{player number, number of troops owned} from troopCounter dictionary
-
 		TroopRankStatic = new List<int[]> ();
-
 		for (int i = 1; i <= numberOfPlayers; i++) {
 			TroopRankStatic.Add (new int[2]);
 			TroopRankStatic [i - 1] [0] = i;
 			TroopRankStatic [i - 1] [1] = troopCount.troopCounter ["Player" + i];
 		}
-
 		// list of only the troop counts (values only)
 		TroopValues = new List<int>();
-
 		for (int j = 0; j < numberOfPlayers; j++)
 			TroopValues.Add (TroopRankStatic [j] [1]);
 
@@ -54,24 +49,18 @@ public class TroopRank : MonoBehaviour {
 
 		// iterate through the ordered TroopValues
 		for (int k = 0; k < numberOfPlayers; k++) {
-
 			// iterate through TroopRankStatic territory counts
 			for (int l = 0; l < TroopRankStatic.Count; l++) {
-
 				// build list of players ranked by troop counts
 				if (TroopValues [k] == TroopRankStatic [l] [1]) {
-
 					TroopCountPlayerRanks.Add (TroopRankStatic [l] [0]);
 					// remove the player just chosen to prevent duplicates
-
 					TroopRankStatic.RemoveAt (l);
-
 					// jump out of loop and move onto next k
 					l = numberOfPlayers;
 				}
 			}
 		}
-
 		// Only runs when troop count rank is active
 		if (activeCatagory)
 			// update troop count display
@@ -80,7 +69,6 @@ public class TroopRank : MonoBehaviour {
 
 	// finds if troop count is the active catagory - called in ChangeCatagory
 	public void UpdateTroopCountDisplay(string catagory){
-
 		if (catagory == "Troop Count")
 			activeCatagory = true;
 		else

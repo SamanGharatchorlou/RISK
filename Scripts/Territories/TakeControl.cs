@@ -47,19 +47,14 @@ public class TakeControl : MonoBehaviour {
 
 		// Adds a new soldier to defending country (attacker colour)
 		addSoldier.PlaceSoldier ();
-
 		// causes a troop to be added to defender and removed from attacker in UpdateTroopCounter;
 		countryManagement.ChangeArmySize (defendingCountry, 1);
-
 		// Removes a soldier from attacker (moved to defender land - now claimed)
 		armyManagement.RemoveDead ("AttackingCountry", 1);
-
 		// default transfers all attackers over to claimed land
 		soldierTransfer.DefaultTransfer(attackingCountry,defendingCountry);
-
 		// update the number of territories dictionary
 		territoryCount.UpdateTerritoryBank (attackingCountry, defendingCountry);
-
 		// update continent bonus
 		continentBonus.UpdateContBonus ();
 

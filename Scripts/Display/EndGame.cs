@@ -27,25 +27,19 @@ public class EndGame : MonoBehaviour {
     }
 
     public void DoesGameEnd() {
-
         // gets the players ranked 1st and 2nd by territory count
         string playerRank1 = "Player" + territoryRank.TerrCountPlayerRanks[0];
         string playerRank2 = "Player" + territoryRank.TerrCountPlayerRanks[1];
-
         // if player ranked 2nd has no territories game is over
         if (territoryCount.landCounter[playerRank2] == 0) {
-
             // show end game text
             scroll.gameObject.SetActive(true);
             endGameText.gameObject.SetActive(true);
-
             // determins player win or player lose text
             if (playerRank1 == "Player1")
                 PlayerWins();
-
             else
                 ComputerWins();
-
             // prevents player interacting with game buttons
             CloseGame();
         }
@@ -64,11 +58,9 @@ public class EndGame : MonoBehaviour {
     }
 
     void CloseGame() {
-
         // locks all buttons
         buttonColour.LockAllButtons();
         buttonColour.LockButton("instructions");
-
         // changes player turn so that its not player 1 - deactivating OnMouseDown countrySelector
         if (playerTurn.CurrentPlayer() == 1)
             playerTurn.NextPlayer(false);

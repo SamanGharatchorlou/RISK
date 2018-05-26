@@ -33,7 +33,6 @@ public class SetupPhase : MonoBehaviour {
 
 	//place troops on a chosen country - to be called by AI controller
 	public void AIPlaceTroops(){
-
 		// skips dead players
 		if (phases.deadPlayer) {
 			print ("setup skipped");
@@ -42,10 +41,8 @@ public class SetupPhase : MonoBehaviour {
 			return;
 		}
 		placementDelay = globalFunctions.timeDelay;
-
 		// select a single front line country
 		SelectFrontLineCountry();
-
 		// place all soldiers onto 1 frontline country
 		PlaceAfterTime();
 	}
@@ -65,28 +62,22 @@ public class SetupPhase : MonoBehaviour {
 	// selects and tags a random country under player control given that it has an enemy neighbour
 	public void SelectFrontLineCountry(){
 		frontLineCountries = new List<string> ();
-
 		// removes all previous selection - why is there more than 1? dont know but there is sometimes...
 		previousSelections = GameObject.FindGameObjectsWithTag ("SelectedCountry");
-
 		foreach(GameObject selection in previousSelections)
 			selection.gameObject.tag = "Untagged";
 		
 		// build a list of all controlled countries
 		controlledCountries = globalFunctions.ControlledCountryList (1);
-
 		foreach (string country in controlledCountries) {
-
 			neighbouringEnemies = globalFunctions.EnemyNeighbourList (country);
-
 			if (neighbouringEnemies.Count > 0)
 				frontLineCountries.Add (country);
 		}
-        
+		//TODO: this skips the play but the next player then does not work properly, requires human to press end phase to proceed and game is messed up
 		// player is dead
 		if (frontLineCountries.Count == 0)
 			return;
-
 		// select random country from selection
 		randomCountryIndex = Mathf.FloorToInt (Random.Range (0f, frontLineCountries.Count));
 		randomCountry = GameObject.Find (frontLineCountries [randomCountryIndex]);

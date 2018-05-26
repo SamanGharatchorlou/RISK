@@ -19,13 +19,12 @@ public class DisplayTurn : MonoBehaviour {
 
 	// displays game and player turn numbers
 	public void UpdateTurnText(int playerTurnNumber, int gameTurnNumber){
-
 		// displays the players turn number
 		turnText.text = "Player " + playerTurnNumber;
 		turnText.color = teamChecker.GetColour (playerTurnNumber);
-
 		// displays the games turn number
 		TurnNumberText.text = gameTurnNumber.ToString ();
 	}
+
 
 }

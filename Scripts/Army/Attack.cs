@@ -47,26 +47,20 @@ public class Attack : MonoBehaviour {
 
 	// Two countries battle i.e one set of die rolls (max 2 deaths) ---- Battle button ----
 	public void ATTACK(){
-
 		// only run code during battle phase
 		if (phases.battlePhase == true) {
-
 			click.Play ();
-
 			// these two functions set the attacking and defending country variables
 			AttackerArmySize ();
 			DefenderArmySize ();
-
 			// only runs code if an attacker & defender has been selected
 			if (AttackerArmySize () != -1 & DefenderArmySize () != -1) {
-
 				// Checks if the countries can battle
 				if (AttackerArmySize () > 1 & CanAttack(attackingCountry,defendingCountry)) {
 					Battle (AttackerArmySize (), DefenderArmySize ());
 					gameInstructions.BattleOutcome (deadAttackers, deadDefenders);
 					displayEditor.BattleResult (attackingCountry, defendingCountry, deadAttackers, deadDefenders);
 				}
-
 				// if defender has 0 troops attacker claims the land
 				if (DefenderArmySize () == 0)
 					takeControl.ClaimLand (attackingCountry, defendingCountry);
@@ -76,15 +70,12 @@ public class Attack : MonoBehaviour {
 
 	// BATTLE! - calculates remaining troops
 	void Battle(int attackers, int defenders){
-
 		if (!battleSound.isPlaying) {
-
+			//battleSound.Play ();
 			battleSound.time = Random.Range(0f,battleSound.clip.length);
 			battleSound.Play();
 			StartCoroutine (audioFadeOut.FadeOut (battleSound, 3f));
-
 		}
-
 		// attackers must leave 1 man behind
 		attackers = attackers-1;
 		diceRoll.CalculateBattle(attackers,defenders,out deadAttackers,out deadDefenders);
@@ -97,10 +88,8 @@ public class Attack : MonoBehaviour {
 
 	// Checks if the countries are neighbours and not owned by the same player
 	public bool CanAttack(GameObject attackingCountry, GameObject defendingCountry){
-
 		// are they neighbours?
 		Neighbours = targetingNetwork.isNeighbour (attackingCountry.name, defendingCountry.name);
-
 		// are they enemies?
 		attackingPlayer = teamChecker.GetPlayer (attackingCountry);
 		defendingPlayer = teamChecker.GetPlayer (defendingCountry);
@@ -113,35 +102,26 @@ public class Attack : MonoBehaviour {
 
 	// Gets the attackers army size
 	public int AttackerArmySize(){
-
 		attackingCountry = GameObject.FindGameObjectWithTag("AttackingCountry");
 		// ensures an attacker has been selected
-
 		if (attackingCountry != null) {
-
 			attackerArmySize = countryManagement.GetArmySize (attackingCountry.name);
 			return attackerArmySize;
-
 		} else {
-
 			gameInstructions.NoSelection("attacker");
-			// returns a nonsense value for checking
+			// returns a non sense value for checking
 			return -1;
 		}
 	}
 
 	// Gets the defenders army size;
 	int DefenderArmySize(){
-
 		defendingCountry = GameObject.FindGameObjectWithTag ("DefendingCountry");
 		// ensures a defender has been selected
-
 		if (defendingCountry != null) {
 			defenderArmySize = countryManagement.GetArmySize (defendingCountry.name);
 			return defenderArmySize;
-
 		} else {
-
 			gameInstructions.NoSelection("defender");
 			// returns a non sense value for checking
 			return -1;

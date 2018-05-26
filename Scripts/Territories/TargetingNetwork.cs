@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class TargetingNetwork : MonoBehaviour {
 
-    //the first item in each list item (i.e. in each sub list) represents the country
-    //the otehr items in the sub list represent all of its neighbouring countries, i.e. countries it can attack
 	public string[][] network;
 
 	void Awake(){
@@ -13,10 +11,8 @@ public class TargetingNetwork : MonoBehaviour {
 	}
 
 	void BuildNetwork() {
-
 		// Build territory network
 		network = new string[42][] {
-
 			// North America (9)
 			new string[]{ "Alaska", "Alberta", "North West Territory", "Kamchatka" },
 			new string[]{ "Alberta", "Alaska", "Ontario", "North West Territory", "Western United States" },
@@ -76,13 +72,9 @@ public class TargetingNetwork : MonoBehaviour {
 
 	// returns true if the countries are neighbours
 	public bool isNeighbour(string attacker, string defender){
-
 		foreach (string[] subNetwork in network) {
-
 			if (subNetwork [0] == attacker) {
-
 				foreach (string country in subNetwork) {
-
 					if (country == defender)
 						return true;
 				}
@@ -91,14 +83,11 @@ public class TargetingNetwork : MonoBehaviour {
 		return false;
 	}
 
-	// returns a given country's neighbours (incl. itself at index 0)
+	// returns a given country's neighbours (incl. itself at index 0
 	public string[] Neighbours(string someCountry){
-
 		foreach(string[] subNetwork in network){
-
 			if (someCountry == subNetwork [0])
 				return subNetwork;
-
 		}
 		return network[0];
 	}

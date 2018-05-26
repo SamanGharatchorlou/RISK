@@ -25,12 +25,10 @@ public class SoldierBonus : MonoBehaviour {
 
 	// build a  soldier bonus dictionary (territory bonus + continent bonus)
 	public void UpdateSoldierBonus(int numberOfPlayers){
-
 		for (int i = 1; i <= numberOfPlayers; i++) {
 			player = "Player" + i;
 			soldierIncome [player] = continentBonus.playerContBonus [player] + territoryBonus.playerTerrBonus [player];
 		}
-
 		// rebuild soldier bonus list when update has occured
 		soldierBonusRank.BySolBonusRank(numberOfPlayers);
 	}

@@ -27,6 +27,7 @@ public class PlayerRank : MonoBehaviour {
     TextGenerationSettings textSetting;
     float boxWidth, boxHeight;
 
+
     Color teamColour;
 
 	Vector3 cellPos, adjustXPos, adjustYPos;
@@ -54,10 +55,8 @@ public class PlayerRank : MonoBehaviour {
 
     // build the player stats table
     public void BuildRankTable(int numberOfPlayers){
-
         numbOfPlayers = numberOfPlayers;
         rankTable = new List<Text[]>();
-
 		// build a 2 x numberOfPlayers table of text boxes (cells)
 		for (int y = 0; y < numberOfPlayers; y++) {
             rankTable.Add(new Text[] { CreateCell(), CreateCell() });
@@ -67,7 +66,6 @@ public class PlayerRank : MonoBehaviour {
         textSetting = cellText.GetGenerationSettings(cellText.rectTransform.rect.size);
         boxWidth = textBoxGen.GetPreferredWidth(cellText.text, textSetting);
         boxHeight = textBoxGen.GetPreferredHeight(cellText.text, textSetting);
-
         // set x and y distances between cells
         cellPos = rankPlacer.transform.position;
 		adjustXPos = new Vector3 (boxWidth*2f, 0, 0);
@@ -75,13 +73,11 @@ public class PlayerRank : MonoBehaviour {
 
         // set cell positions
         for (int i = 0; i < rankTable.Count; i++) {
-
 			// set column 1 position
 			cellPos -= adjustXPos;
 			cellPos -= adjustYPos;
             textBox = rankTable[i][0];
 			textBox.transform.SetPositionAndRotation (cellPos,Quaternion.identity);
-
 			// set column 2 position
 			cellPos += adjustXPos;
             textBox = rankTable[i][1];
@@ -92,13 +88,10 @@ public class PlayerRank : MonoBehaviour {
 
 	// rank by territroy count
 	public void RankedTerrCount(){
-
 		// build table
 		for (int i = 0; i < numbOfPlayers; i++) {
-
 			playerNumber = territoryRank.TerrCountPlayerRanks [i];
 			player = "Player" + playerNumber;
-
             // set player number, values and colours
             rankTable[i][1].text = territoryCount.landCounter[player].ToString();
 			RankedTableProperties (i);
@@ -107,12 +100,10 @@ public class PlayerRank : MonoBehaviour {
 
 	// rank by troop count
 	public void RankedTroopCount(){
-
 		// build table
 		for (int j = 0; j < numbOfPlayers; j++) {
 			playerNumber = troopRank.TroopCountPlayerRanks [j];
 			player = "Player" + playerNumber;
-
             // set player number, value and colour
             rankTable[j][1].text = troopCount.troopCounter[player].ToString();
 			RankedTableProperties (j);
@@ -121,13 +112,10 @@ public class PlayerRank : MonoBehaviour {
 		
 	// rank by soldier bonus
 	public void RankedSoldierBonus(){
-
 		// build table
 		for (int k = 0; k < numbOfPlayers; k++) {
-
 			playerNumber = soldierBonusRank.SolBonusPlayerRanks [k];
 			player = "Player" + playerNumber;
-
             // set player number, values and colours
             rankTable[k][1].text = soldierBonus.soldierIncome[player].ToString();
 			RankedTableProperties (k);
@@ -149,19 +137,15 @@ public class PlayerRank : MonoBehaviour {
 
 	// create a single cell
 	public Text CreateCell(){
-
 		cell = GameObject.Instantiate (Resources.Load ("Text Box"), rankPlacer.transform) as GameObject;
 		cellText = cell.GetComponent<Text> ();
-
 		return cellText;
 	}
 
     // display enemy players
     public string DisplayPlayers(int playerNo ) {
-
         if (playerNo == 1)
             return "Player";
-
         else
             return "Enemy Player " + (playerNo - 1);
     }

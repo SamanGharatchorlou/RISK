@@ -28,23 +28,18 @@ public class TerritoryCount : MonoBehaviour {
 
 	// builds a dictionary of the number of territories owned
 	public void BuildTerritoryBank(int numberOfPlayers) {
-
 		landCounter = new Dictionary<string, int> ();
 		numbOfPlayers = numberOfPlayers;
-
 		// re runs PlayerLandBank code as previous table is modified by BoardSetUp.RandomPlayer()
 		boardSetUp.PlayerLandBank (numbOfPlayers);
-
 		for (int i = 0; i < numbOfPlayers; i++)
 			landCounter.Add ("Player" + (boardSetUp.landBank [i] [0] + 1), boardSetUp.landBank [i] [1]);
-
 		// build rank system
 		territoryRank.ByTerrCount (numbOfPlayers);
 	}
 
 	// updates territory bank - called in TakeControl
 	public void UpdateTerritoryBank(GameObject attacker, GameObject defender){
-
 		attackingPlayer = "Player" + attack.attackingPlayer;
 		defendingPlayer = "Player" + attack.defendingPlayer;
 

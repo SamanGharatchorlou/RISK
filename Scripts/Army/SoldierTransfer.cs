@@ -30,34 +30,26 @@ public class SoldierTransfer : MonoBehaviour {
 
 	// default - move all attackers over
 	public void DefaultTransfer(GameObject fromCountry, GameObject toCountry){
-
 		// moves all the troops over except from 1
 		for (int i = 0; countryManagement.GetArmySize(fromCountry.name) > 1; i++) {
 			armyMovement.MoveSoldier (fromCountry, toCountry);
 		}
-
 	}
 
 	// moves troops from attacking country to claimed country (----- + button -----)
 	public void FwdTransferTroops(){
-
 		// only run code on battle phase
 		if (phases.battlePhase) {
-
 			// play audio
 			audioFadeOut.MoreTroopsAudio();
-
 			// lock in current selections
 			fromCountry = attack.attackingCountry;
 			toCountry = attack.defendingCountry;
-
 			// error prevention
 			if (fromCountry != null) {
-
 				// must leave 1 man behind
 				if (countryManagement.GetArmySize (fromCountry.name) > 1)
 					armyMovement.MoveSoldier (fromCountry, toCountry);
-
 				buttonColour.BattlePlusMinusColour2 (fromCountry, toCountry, 0);
 			}
 		}
@@ -65,30 +57,22 @@ public class SoldierTransfer : MonoBehaviour {
 		
 	// moves troops from claimed country to attacking country (----- - button -----)
 	public void BackTransferTroops(){
-
 		// only run code on battle phase
 		if (phases.battlePhase) {
-
 			// play audio
 			audioFadeOut.MoreTroopsAudio();
 			// lock in current selections
-
 			fromCountry = attack.attackingCountry;
 			toCountry = attack.defendingCountry;
-
 			// maximum number of attackers is 3
 			attackerNumbers = attack.attackerArmySize - 1;
-
 			if (attackerNumbers > 3)
 				attackerNumbers = 3;
-
 			// error prevention
 			if (fromCountry != null) {
-
 				// if attacker attacked with 3 or more must leave at least those 3 behind
 				if (fromCountry != null & toCountry != null & countryManagement.GetArmySize (toCountry.name) > attackerNumbers)
 					armyMovement.MoveSoldier (toCountry, fromCountry);
-
 				buttonColour.BattlePlusMinusColour2 (fromCountry, toCountry, attackerNumbers);
 			}
 		}

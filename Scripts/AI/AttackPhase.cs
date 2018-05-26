@@ -37,30 +37,23 @@ public class AttackPhase : MonoBehaviour {
 		// skips dead player
 		if (phases.deadPlayer) {
 			EndAssault ();
-
 			return;
 		}
-
 		// Set variables
 		attackingCountry = null;
 		defendingCountry = null;
-
-        // the lower this value the more aggressive/reckless the AI - min army size the begin attack with
-        armySize = 4;
+		armySize = 4;  // the lower this value the more aggressive/reckless the AI - min army size the begin attack with
 		attackDelay = globalFunctions.timeDelay;
 		attackerIndex = 0;
-
 		// begins the process of attack
 		BeginAssault ();
 	}
 
 	// select attacker and target an enermy
 	void BeginAssault(){
-
 		SelectAttacker ();
 		if (attackingCountry != null)
 			SelectDefender ();
-
 		// attack enemy target
 		if (defendingCountry != null)
 			AttackAfterTime ();
@@ -68,7 +61,6 @@ public class AttackPhase : MonoBehaviour {
 
 	// selects which country to attack with
 	void SelectAttacker(){
-
 		// only be called once during attack phase
 		if (attackerIndex == 0)
 			// list of countries that can attack with 3 or more troops
@@ -76,40 +68,28 @@ public class AttackPhase : MonoBehaviour {
 		
 		// no other attacking possibilities ends assault
 		if (attackerIndex >= attackingCountryList.Count) {
-
 			EndAssault ();
 			return;
 		}
-
 		attackingCountry = attackingCountryList [attackerIndex];
 	}
 
-
-
 	// Selects which country to attack given an attacker has been selected
 	void SelectDefender(){
-
 		// list of the attacking country's Neighbours
 		neighbours = targetingNetwork.Neighbours (attackingCountry);
-
-		// targets an enemy country it its army size is < the one is can attack with (number on land - 1)
+		// targets an enemy country if its army size is < the one is can attack with (number on land - 1)
 		for (int i = 0; i < neighbours.Length; i++) {
-
 			defendingCountry = neighbours [i];
 			UpdateArmySizes ();
-
 			if (!teamChecker.UnderControlName (defendingCountry) & (attackerArmySize + 1) > defenderArmySize)
 				break;
-
 			// setting atttacker army none sense value stops assault if there are no countries to attack
 			else if (i == neighbours.Length - 1) {
-
 				attackerArmySize = 0;
 				return;
-
 			}
 		}
-
 		// tags attacker and defender
 		AddTag ("AttackingCountry", attackingCountry);
 		AddTag ("DefendingCountry", defendingCountry);
@@ -117,29 +97,21 @@ public class AttackPhase : MonoBehaviour {
 
 	// attacks repeatedly given certain conditions are met
 	void AttackAfterTime(){
-
 		if (attackerArmySize > 1) {
-
 			attack.ATTACK ();
 			UpdateArmySizes ();
-
 			// recall function after time
 			Invoke ("AttackAfterTime", attackDelay);
 		}
-
 		// if country is claimed make new assault from newly claimed land (i.e. defending country becomes attacking country) and reselect defender
 		else if (teamChecker.UnderControlName (defendingCountry) & defenderArmySize >= armySize) {
-
 			attackingCountry = defendingCountry;
 			SelectDefender ();
-
 			// for select attacker none sense value to work update must be skipped
 			if(attackerArmySize > 0)
 				UpdateArmySizes ();
-
 			Invoke ("AttackAfterTime", attackDelay);
 		} 
-
 		// attacks again from another attacking point
 		else {
 			attackerIndex++;
@@ -155,13 +127,10 @@ public class AttackPhase : MonoBehaviour {
 
 	// adds a tag to the given country
 	void AddTag(string tag, string country){
-
 		// checks for previous tags
 		previousTag = GameObject.FindGameObjectWithTag (tag);
-
 		if (previousTag != null)
 			previousTag.gameObject.tag = "Untagged";
-
 		// add new tag
 		countryToTag = GameObject.Find (country);
 		countryToTag.gameObject.tag = tag;
@@ -169,10 +138,8 @@ public class AttackPhase : MonoBehaviour {
 
 	// ends AI attack phase and resets variables
 	void EndAssault(){
-
 		attackingCountry = null;
 		defendingCountry = null;
-
 		// ---- Begin movement phase ----
 		phases.EndPhase ();
 		movementPhase.AIMoveSoldiers ();

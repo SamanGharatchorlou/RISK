@@ -47,17 +47,14 @@ public class PlayerTurn : MonoBehaviour {
 	}
 
 	void Start(){
-
 		// sets the turn to 1 after opening phase
 		turn = 1;
-
 		// Player 1 starts
 		player1 = true;
 		player2 = false;
 		player3 = false;
 		player4 = false;
 		player5 = false;
-
 		// Create list of players 1-5 - can have upto 5 players
 		turnOrder = new List<bool> ();
 		turnOrder.Add (player1);
@@ -65,15 +62,14 @@ public class PlayerTurn : MonoBehaviour {
 		turnOrder.Add (player3);
 		turnOrder.Add (player4);
 		turnOrder.Add (player5);
-
 		// multi-dim arrary of colours (r,g,b) a is always 1
 		playerColourList = new float[][] {
-			new float[] {0,1,0},            //green
-			new float[] {0,0,1},            //blue
-			new float[] {1,0,0},            //red
+			new float[] {0,1,0}, //green
+			new float[] {0,0,1}, //blue
+			new float[] {1,0,0}, //red
 			new float[] {1, 0.92f, 0.016f}, //yellow
-			new float[] {0,0,0},            //black
-			new float[] {0.2f,0.2f,0.2f}    // dark grey - default text colour
+			new float[] {0,0,0}, //black
+			new float[] {0.2f,0.2f,0.2f} // dark grey - default text colour
 		};
 	}
 
@@ -84,58 +80,42 @@ public class PlayerTurn : MonoBehaviour {
 
 	// Returns the current player number
 	public int CurrentPlayer(){
-
 		int currentPlayerTurn = 0;
-
 		for (int a = 0; a < turnOrder.Count; a++) {
-
 			if (turnOrder [a] == true)
 				currentPlayerTurn = a;
 		}
-
 		return currentPlayerTurn+1;
 	}
 
-	//NOTE: this function hasnt actually been used anywhere yet.
+	//NOTE: hasnt actually been used anywhere yet.
 	// returns the next players number
 	public int FollowingPlayer(){
-
 		if (CurrentPlayer () < boardSetUp.numberOfPlayers)
 			return CurrentPlayer () + 1;
-
 		else
 			return 1;
 	}
 
 	// Ends the current players turn
 	public void NextPlayer(bool activeAIPlayer) {
-
 		for (int i = 0; i < turnOrder.Count; i++) {
-
 			if (turnOrder [i] == true) {
-
 				turnOrder [i] = false;
-
 				// changes player (not incl. last player)
 				if (i < turnOrder.Count - 1) {
-
 					turnOrder [i + 1] = true;
-
 					// breaks loop prevents continual turn changes
 					break;
 				}
-
 				// changes last player to player 1
 				else
 					turnOrder [0] = true;
-
 				// updates turn number
 				turn++;
 			}
 		}
-
 		UpdateStats ();
-
 		// activate AI player - some circumstances require the AI code not to run (allocateSoldiers.EndOpeningPhase)
 		if (activeAIPlayer) {
 			ActivateAI ();
@@ -145,36 +125,28 @@ public class PlayerTurn : MonoBehaviour {
 		
 	// activate AI players if its not player 1
 	void ActivateAI(){
-
 		if (phases.openingPhase)
 			starterPhase.AIDeployTroop ();
-        
+		//TODO: adjust this to take a different number of human players into account
 		else if (CurrentPlayer () != 1)
 			setupPhase.AIPlaceTroops ();
 	}
 		
 	void UpdateStats(){
-
 		// calculate bonus from continent bonus
 		continentBonus.UpdateContBonus ();
-
 		// give player bonus soldiers
 		deploySoldiers.BonusStore ();
-
 		// displays the players turn, game turn numbers & game instructions
 		displayTurn.UpdateTurnText (CurrentPlayer(),turn);
 		gameInstructions.PlaceTroops ();
-
 		// prevents player adding multiple players during openingPhase
 		if(phases.openingPhase)
 			allocateSoldiers.dropCounter = turn;
-
 		// update rank display before player 1's turn - 3 rotations brings it back to original category
 		if (!phases.openingPhase & CurrentPlayer () ==  1) {
-
 			for (int i = 0; i < 3; i++)
 				changeCategory.RotateCategory ();
-
 		}
 	}
 

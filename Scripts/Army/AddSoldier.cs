@@ -34,14 +34,12 @@ public class AddSoldier : MonoBehaviour {
 
 	// Finds the county's C.O.M
 	public Vector3 findCOM(Transform countryTransform){
-
 		// initialise values to 0
 		countryMass = 0;
 		countryMassVector = new Vector3(0,0,0);
 		countryCOM = new Vector3 (0,0,0);
 
 		foreach(Transform child in countryTransform){
-
 			// Sum all the individual child mass vectors into childMassVector
 			childMass = child.localScale.x * child.localScale.z;
 			childPosition = child.position;
@@ -68,37 +66,28 @@ public class AddSoldier : MonoBehaviour {
 		placer.transform.parent = this.transform;
 		x = 0;
 		n = 0;
-
-		// Some crazy code that places the "placer" in a square shape of increasing size depending on the number
+		// Some crazy ass code that places the "placer" in a square shape of increasing size depending on the number
 		// of soldiers the country has
 		if (soldierNumber > 1) {
-
 			for (int i = 1; i <= soldierNumber; i++) {
-
 				// Sets the number of fowards to execute before a rotation
 				if (x % 2 == 0 & x > 0)
 					n++;
-
 				// Iterates through the number of times it needs to move forward according to n
 				for (int a = 0; a <= n; a++) {
-
 					// Moves the placer forward one
 					if (i == soldierNumber)
 						break;
-
 					placer.transform.Translate (Vector3.forward * 4.5f);
 					i++;
 				}
-
 				// Rotates the placer right
 				placer.transform.Rotate(Vector3.up * 90, Space.Self);
 				x++;
-
 				if (i != soldierNumber)
 					i--;
 			}
 		}
-
 		// Stores the placers position and removes placer
 		adjustment = placer.transform.position;
 		Destroy (placer);
@@ -108,20 +97,16 @@ public class AddSoldier : MonoBehaviour {
 
 	// Places a soldier at the country's adjusted COM
 	public void PlaceSoldier(){
-
 		soldierPosition = new Vector3 (0, 0, 0);
 		soldierPosition = PositionAdjustment(findCOM(this.transform));
 
 		// Instantiates a soldier at the stored placer location
 		clone = Instantiate (Resources.Load("Soldier"), soldierPosition, Quaternion.identity) as GameObject;
 		clone.transform.parent = this.transform;
-
 		if (phases.setupPhase)
 			clone.gameObject.tag = "DeployedSoldier";
-
 		// requires player index as unput, hence the -1
 		soldierManagement.SetSoldierColour(clone, playerTurn.CurrentPlayer()-1);
-
 		// update game stats
 		troopCount.UpdateTroopBankV2(playerTurn.CurrentPlayer(),1);
 	}

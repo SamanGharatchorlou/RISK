@@ -31,25 +31,19 @@ public class GameStats : MonoBehaviour {
 		
 	// Set up all the game statistics lists
 	public void SetUpGameStats(int numberOfPlayers){
-
+		//BuildGameStats ();
 		// set up number of territories list
 		territoryCount.BuildTerritoryBank (numberOfPlayers);
-
 		// set up number of troops list
 		troopCount.BuildTroopBank(numberOfPlayers);
-
 		// set up territory bonus list
 		territoryBonus.BuildTerritoryBonus(numberOfPlayers);
-
 		// set up continent bonus list
 		continentBonus.BuildContBonus(numberOfPlayers);
-
-		//not required but just in case lets update the stats
+		//Do i need this line of code?
 		continentBonus.UpdateContBonus();
-
 		// set up soldier bonus list
 		soldierBonus.UpdateSoldierBonus(numberOfPlayers);
-
 		// build rank table
 		playerRank.BuildRankTable(boardSetUp.numberOfPlayers);
 	}
